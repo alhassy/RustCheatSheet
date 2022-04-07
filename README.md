@@ -1,2 +1,0 @@
-# RustCheatSheet
-Rust ≈ C + Haskell
