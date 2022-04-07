@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-07 Thu 09:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rust CheatSheet</title>
+<meta name="author" content="[[https://alhassy.github.io/][Musa Al-hassy]]" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link href="https://alhassy.github.io/org-notes-style.css" rel="stylesheet" type="text/css" />
+<link href="https://alhassy.github.io/floating-toc.css" rel="stylesheet" type="text/css" />
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Rust CheatSheet</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#hello-world">1. <a href="#hello-world">Hello World!</a></a>
+<ul>
+<li><a href="#cargo-new">1.1. <a href="#cargo-new">  <code>cargo new</code></a></a></li>
+<li><a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">1.2. <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></a></li>
+</ul>
+</li>
+<li><a href="#the-notation-types-as-namespaces-and-general-imports">2. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
+<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">3. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
+<li><a href="#types">4. <a href="#types">Types</a></a></li>
+</ul>
+</div>
+</div>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#hello-world">1. <a href="#hello-world">Hello World!</a></a>
+<ul>
+<li><a href="#cargo-new">1.1. <a href="#cargo-new">  <code>cargo new</code></a></a></li>
+<li><a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">1.2. <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></a></li>
+</ul>
+</li>
+<li><a href="#the-notation-types-as-namespaces-and-general-imports">2. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
+<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">3. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
+<li><a href="#types">4. <a href="#types">Types</a></a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-hello-world" class="outline-2">
+<h2 id="hello-world"><span class="section-number-2">1.</span> <a href="#hello-world">Hello World!</a></h2>
+<div class="outline-text-2" id="text-hello-world">
+<div class="parallel" id="org70985a9">
+<p>
+
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+    <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Hello, world!"</span>);
+}
+</pre>
+</div>
+
+
+<p>
+Compile and run this with <br />
+<code class="src src-emacs-lisp">rustc hello_world.rs<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">; </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">./hello_world</span></code>
+</p>
+
+</div>
+
+<p>
+The <code class="src src-emacs-lisp">main</code> function is special: It is always the first code that runs in
+every program.  For now, know that names ending in <code class="src src-emacs-lisp">!</code> are “macros”
+&#x2014;special functions that transform code.
+</p>
+</div>
+
+<div id="outline-container-cargo-new" class="outline-3">
+<h3 id="cargo-new"><span class="section-number-3">1.1.</span> <a href="#cargo-new">  <code>cargo new</code></a></h3>
+<div class="outline-text-3" id="text-cargo-new">
+<p>
+Packages of code are referred to as <a href="https://crates.io/"><i>crates</i></a> &#x2014;which are shipped with <i>cargo</i>,
+the build tool and package manager. Cargo is the most convenient way to create a
+new Rust project.
+</p>
+
+<p>
+Running <code>cargo new my-first-program</code> creates a folder <code>my-first-program</code> with a
+bunch of stuff in it. Importantly, it has a <code>src/main.rs</code> file which is our entry
+point (which prints ‘Hello, world!’) and <code>Cargo.toml</code> which is a configurations
+file &#x2014;e.g., to keep track of what external packages our program requires. We
+can now do <code>cd my-first-program; cargo run</code> to compile and run our program in one
+go: <code>Hello, world!</code> is printed.
+</p>
+
+<p>
+To install a new crate, simply add it to the end of the <code>[dependencies]</code> list in
+<code>Cargo.toml</code>. For example, open <code>Cargo.toml</code> and <a href="https://crates.io/crates/rand">at the very end, add</a> <code>rand =
+"0.8.5"</code>.  Next time you do <code>cargo run</code> it will install the <code>rng</code> randomness package.
+</p>
+</div>
+</div>
+
+<div id="outline-container-Let's-see-a-full-program-viz-a-Number-Guessing-Game" class="outline-3">
+<h3 id="Let's-see-a-full-program-viz-a-Number-Guessing-Game"><span class="section-number-3">1.2.</span> <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></h3>
+<div class="outline-text-3" id="text-Let's-see-a-full-program-viz-a-Number-Guessing-Game">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::io;   <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Use the standard input-output library</span>
+<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">rand</span>::<span style="color: #FFE261; background-color: #fff8dc;">Rng</span>; <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Use Random Number Generator trait, needs &#8220;rand&#8221; crate</span>
+<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::<span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>; <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Enumeration to denote result of comparisons</span>
+
+<span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+    <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Guess the number!"</span>);
+    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Ranges &#8220;m..n&#8221; are all integers i with m &#8804; i &lt; n.</span>
+    <span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">secret_number</span> = <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">rand</span>::thread_rng().gen_range(1..101);
+
+    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">The &#8220;loop&#8221; keyword creates an infinite loop.</span>
+    <span style="color: #000000;">loop</span> {
+        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Please input your guess."</span>);
+
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">&#8220;mut&#8221;able variable, bound to an empty String object</span>
+        <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">guess</span> = <span style="color: #FFE261; background-color: #fff8dc;">String</span>::new();
+
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Get a handle to the standard input for your terminal.</span>
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Then, stick user input into (a mutable reference to) &#8220;guess&#8221;.</span>
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">If something goes wrong, show an informative message.</span>
+        <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">io</span>::stdin()
+            .read_line(<span style="color: #000000; background-color: #ffffff;">&amp;</span><span style="color: #000000;">mut</span> guess)
+            .expect(<span style="color: #000000; background-color: #f2f2f2;">"Failed to read line"</span>);
+
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Instead of &#8220;expect&#8221;, we can use &#8220;match&#8221; to move from</span>
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">crashing on an error to instead handling the error...</span>
+
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">/* </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Shadow the &#8220;guess&#8221; variable to avoid using a new variable name.</span>
+
+<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           Handle the possibility of parse errors using Pattern Matching:</span>
+<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           We try to make an unsigned integer out of the user's string input;</span>
+<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           if no number is parsed, we ask the user to guess again. */</span>
+        <span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">guess</span>: <span style="color: #FFE261; background-color: #fff8dc;">u32</span> = <span style="color: #000000;">match</span> guess.trim().parse() {
+            <span style="color: #FFE261; background-color: #fff8dc;">Ok</span>(num) =&gt; num,
+            <span style="color: #FFE261; background-color: #fff8dc;">Err</span>(_)  =&gt; <span style="color: #000000;">continue</span> <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Restarts the loop</span>
+        };
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Alternatively: guess.trim().parse().unwrap() tries to get &#8220;num&#8221;; otherwise it crashes.</span>
+        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">&#8220;unwrap&#8221; and &#8220;expect&#8221; are useful for quick development, but otherwise dangerous to use.</span>
+
+        <span style="color: #000000;">match</span> guess.cmp(<span style="color: #000000; background-color: #ffffff;">&amp;</span>secret_number) {
+            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Less</span>    =&gt; <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Too small!"</span>),
+            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Greater</span> =&gt; <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Too big!"</span>),
+            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Equal</span>   =&gt; { <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"You win!"</span>); <span style="color: #000000;">break</span> }, <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Exit the loop</span>
+        }
+    }
+}
+</pre>
+</div>
+
+<p>
+<i>Exercise!</i> Instead of the <code class="src src-rust"><span style="color: #000000;">continue</span></code> on parse errors,
+<code class="src src-rust"><span style="color: #000000;">use</span> <span style="color: #000000; font-weight: bold;">std</span>:process</code> library to quit the program with
+<code class="src src-rust"><span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">process</span>::exit(1)</code> after providing a useful message to
+the user.
+</p>
+
+<p>
+<i>Exercise!</i> Notice that the first <code class="src src-emacs-lisp">guess</code> variable had its <i>string</i> type
+inferred.  If we remove the explicit <i>numeric</i> type annotation from the second
+<code class="src src-emacs-lisp">guess</code> then <code class="src src-emacs-lisp">parse</code> wouldn't know what kind
+of value is being parsed and we get a compile error. Remove the explicit type
+annotation by specialising <code class="src src-emacs-lisp">parse</code> to get <i>numeric</i> <code>u32</code> values using the
+so-called “turbofixh syntax”: <code class="src src-rust"> parse::&lt;<span style="color: #FFE261; background-color: #fff8dc;">u32</span>&gt;() </code>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-the-notation-types-as-namespaces-and-general-imports" class="outline-2">
+<h2 id="the-notation-types-as-namespaces-and-general-imports"><span class="section-number-2">2.</span> <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></h2>
+<div class="outline-text-2" id="text-the-notation-types-as-namespaces-and-general-imports">
+<p>
+Dots are generally used to get field from an object such as <code>p.0</code> for pairs; the
+double-colon is used similarly but for namespaces as in <code>library::file::method</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+    <span style="color: #000000; font-weight: bold;">assert!</span>(<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::min(3, 8) == 3);
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><p>
+<code class="src src-rust"><span style="color: #000000;">use</span></code> directives can be used to “bring into scope” names from other namespaces.
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">use std::cmp::min;        // Single import</span>
+<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">use std::cmp::{max, min}; // Multiple imports</span>
+<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::*;             <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Imports everything</span>
+<span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+    <span style="color: #000000; font-weight: bold;">assert!</span>(min(5, 5) == max(5, 5));
+}
+</pre>
+</div></li>
+
+<li><p>
+Types are namespaces too, and methods can be called as regular functions:
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+    <span style="color: #000000; font-weight: bold;">assert!</span>(<span style="color: #000000; background-color: #f2f2f2;">"hola"</span>.len() == <span style="color: #FFE261; background-color: #fff8dc;">str</span>::len(<span style="color: #000000; background-color: #f2f2f2;">"hola"</span>));
+}
+</pre>
+</div>
+<p>
+In-general, <code>object.method(args) ≡ type::method(object, args)</code>.
+</p></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-a-first-look-at-ownership-why-let-x-f-x-f-x-crashes" class="outline-2">
+<h2 id="a-first-look-at-ownership-why-let-x-f-x-f-x-crashes"><span class="section-number-2">3.</span> <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></h2>
+<div class="outline-text-2" id="text-a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">
+<p>
+Rust comes with a feature called <i>ownership</i>, which aims to prevent us from
+writing memory unsafe code.
+</p>
+
+<p>
+The following program looks like it should work without any problems&#x2026;
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+<span id="coderef-hi-def" class="coderef-off"><span class="linenr"> 2: </span>    <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">hi</span> = <span style="color: #000000; background-color: #f2f2f2;">"hello"</span>.to_string(); <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">We want an object; not a literal primitive.</span></span>
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>    <span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">speak</span>(<span style="color: #000000; font-weight: bold;">words</span>: <span style="color: #FFE261; background-color: #fff8dc;">String</span>) {
+<span class="linenr"> 5: </span>        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"</span><span style="color: #000000; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #000000; background-color: #f2f2f2;">"</span>, words)
+<span class="linenr"> 6: </span>    }
+<span class="linenr"> 7: </span>
+<span id="coderef-first-call" class="coderef-off"><span class="linenr"> 8: </span>    speak(hi);</span>
+<span id="coderef-second-call" class="coderef-off"><span class="linenr"> 9: </span>    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">speak(hi); // Whoops, the *value* of &#8220;me&#8221; has moved out of this *variable*!</span></span>
+<span class="linenr">10: </span>
+<span id="coderef-all-good" class="coderef-off"><span class="linenr">11: </span>    hi = <span style="color: #000000; background-color: #f2f2f2;">"yup"</span>.to_string();</span>
+<span class="linenr">12: </span>    speak(hi)
+<span class="linenr">13: </span>}
+</pre>
+</div>
+
+<p>
+<b>Ownership</b> means <i>variables own their values</i>:
+</p>
+<ul class="org-ul">
+<li>Line <a href="#coderef-hi-def" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-hi-def');" onmouseout="CodeHighlightOff(this, 'coderef-hi-def');">2</a>: The variable <code>hi</code> owns the string value <code>"hello</code>."</li>
+<li>Line <a href="#coderef-first-call" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-first-call');" onmouseout="CodeHighlightOff(this, 'coderef-first-call');">8</a>: The value <code>"hello"</code> is passed into the function <code>speak</code>, and so
+<i>ownership of the value has moved</i>. In-particular, <code>hi</code> no longer owns a value and
+so cannot be <i>accessed</i> after this line.</li>
+<li>Line <a href="#coderef-second-call" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-second-call');" onmouseout="CodeHighlightOff(this, 'coderef-second-call');">9</a>: We try to call the function <code>speak</code> with a variable that has
+no value and so we get a <i>compile-time</i> error.</li>
+<li>Line <a href="#coderef-all-good" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-all-good');" onmouseout="CodeHighlightOff(this, 'coderef-all-good');">11</a>: We can fix this by letting the variable <code>hi</code> <i>own</i> a value,
+then we can use it again.</li>
+</ul>
+
+<p>
+If we do need access to a variable's value in multiple function calls, we will
+have to pass it by <i>reference</i> instead of by value.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
+<span class="linenr"> 2: </span>    <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">hi</span> = <span style="color: #000000; background-color: #f2f2f2;">"hello"</span>.to_string();
+<span class="linenr"> 3: </span>
+<span id="coderef-borrow" class="coderef-off"><span class="linenr"> 4: </span>    <span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">speak</span>(<span style="color: #000000; font-weight: bold;">words</span>: <span style="color: #000000; background-color: #ffffff;">&amp;</span><span style="color: #FFE261; background-color: #fff8dc;">String</span>) {</span>
+<span class="linenr"> 5: </span>        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"</span><span style="color: #000000; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #000000; background-color: #f2f2f2;">"</span>, words)
+<span class="linenr"> 6: </span>    }
+<span class="linenr"> 7: </span>
+<span id="coderef-use" class="coderef-off"><span class="linenr"> 8: </span>    speak(<span style="color: #000000; background-color: #ffffff;">&amp;</span>hi);  <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Works first time.</span></span>
+<span class="linenr"> 9: </span>    speak(<span style="color: #000000; background-color: #ffffff;">&amp;</span>hi);  <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Works second time!</span>
+<span class="linenr">10: </span>}
+</pre>
+</div>
+
+<p>
+<b>Borrowing</b> means <i>temporarily owning something</i>: Line <a href="#coderef-borrow" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-borrow');" onmouseout="CodeHighlightOff(this, 'coderef-borrow');">4</a> says this function
+wants a <i>reference</i> to a string value; then line <a href="#coderef-use" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-use');" onmouseout="CodeHighlightOff(this, 'coderef-use');">8</a> calls the function by
+making a reference using the “borrow operator” <code>&amp;</code>.
+</p>
+
+<ul class="org-ul">
+<li>A <b>reference</b> is a type that references another value in memory.
+
+<ul class="org-ul">
+<li><p>
+They're useful when we don't want to pass “ownership” to control structures
+(such as for-loops) or functions.
+</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-types" class="outline-2">
+<h2 id="types"><span class="section-number-2">4.</span> <a href="#types">Types</a></h2>
+<div class="outline-text-2" id="text-types">
+<p>
+Rust is a statically &amp; strongly typed language: It knows the types of all
+variables at compile time &#x2014;it can infer them if you don't write them&#x2014; and
+it does no implicit type coercions.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Type</th>
+<th scope="col" class="org-left">Explanation                           ; Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Integers <code>i32, u32</code></td>
+<td class="org-left">Number without decimals               ; <code>123</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Floats <code>f32, f64</code></td>
+<td class="org-left">Numbers with decimals                 ; <code>-1.23, 1e4</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Booleans <code>bool</code></td>
+<td class="org-left">Truth values                          ; <code>true, false, !p, p &amp;&amp; q, p ∥ q</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Characters <code>char</code></td>
+<td class="org-left">Unicode characters                    ; <code>'t', '😻'</code></td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">Tuples <code>(τ₀, τ₁, …, τₙ₋₁)</code></td>
+<td class="org-left">\(n\) things of different types         ; <code>(1, 'a', 2.3)</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Unit <code>()</code></td>
+<td class="org-left">A “zero-tuple”; denotes “done”; value is written <code>()</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Arrays <code>[τ; n]</code></td>
+<td class="org-left">\(n\) things of the same type           ; <code>[1, 2, 3]</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Vectors <code>Vec&lt;τ&gt;</code></td>
+<td class="org-left">Like arrays, but can increase in size ; <code>vec![1, 2, 3]</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Slices <code>[τ]</code></td>
+<td class="org-left">Slices are similar to arrays, but their length is not known at compile time.</td>
+</tr>
+
+<tr>
+<td class="org-left">Structures</td>
+<td class="org-left">A record, hashmap, lightweight class; key-value pairs</td>
+</tr>
+
+<tr>
+<td class="org-left">Enums</td>
+<td class="org-left">Constants; algebraic data-types</td>
+</tr>
+
+<tr>
+<td class="org-left">Ranges</td>
+<td class="org-left">\(m..n\) is the sequence of integers \(i\) with \(m ≤ i < n\).                ; <code>3..7</code></td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">Functions <code>(τ₁, …, τₙ) → τ</code></td>
+<td class="org-left">Transform τᵢ into a τ                 ;  <code>fn first&lt;A, B&gt;(a:A, b:B) -&gt; A { a }</code> </td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">[Read-only] References <code>&amp;τ</code></td>
+<td class="org-left">Refer to an object, without owning it ; <code>let s = ⋯; &amp;s</code> ;; <code>let x = &amp;4</code></td>
+</tr>
+
+<tr>
+<td class="org-left">Mutable references <code>&amp;mut τ</code></td>
+<td class="org-left">Borrow an object and change it        ; <code>let mut s = ⋯; &amp;mut s</code> ;; <code>let x = &amp;mut 4</code></td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">String Slices, <code>&amp;str</code></td>
+<td class="org-left">A string literal that can only be borrowed, but not owned/mutated; <code>let five = "5"</code></td>
+</tr>
+
+<tr>
+<td class="org-left">[Growable] Strings, <code>String</code></td>
+<td class="org-left">Strings that can grow in size; essentially <code>Vec&lt;&amp;str&gt;</code>;; <code>let five = "5".to_string()</code></td>
+</tr>
+</tbody>
+</table>
+
+<ul class="org-ul">
+<li><b>Slices</b> are the answer to “What is the input type of a function that consumes
+arrays <i>but</i> doesn't know their length?” Slices act like temporary views into an
+array or a vector.</li>
+
+<li>Rust vectors are <a href="https://hashrust.com/blog/arrays-vectors-and-slices-in-rust/#:~:text=How%20does%20a,the%20old%20array.">array-lists</a>: They're arrays that double in size whenever
+more space is needed.</li>
+
+<li>Range Example: <code>(1..5).for_each(|i| println!("{}", i));</code></li>
+</ul>
+
+<ul class="org-ul">
+<li>The unit type, <code>()</code>, is often used as the <i>return type</i> of functions that have
+side-effects, such as printing to the screen. Everything has to have a type, so
+<code>()</code> (which can be read “done”) can be that type. The default return type of
+functions is <code>()</code>, unless explicitly indicated otherwise.</li>
+
+<li><p>
+For 𝓃 in {8, 16, 32, 64}, a number of bits, there are <i>signed integers</i> <code>i𝓃</code> which
+can store numbers from \(-2^{n}\) to \(2^{n - 1} - 1\) inclusive, and <i>unsigned
+integers</i> <code>u𝓃</code> which store numbers from \(0\) to \(2^{n}\).
+</p>
+
+<ul class="org-ul">
+<li>These types provide bounds on numbers; e.g., <code class="src src-rust"><span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">it</span>: <span style="color: #FFE261; background-color: #fff8dc;">u8</span> = 256</code> results in a compile error since 256 is out of range for
+<code class="src src-rust"><span style="color: #FFE261; background-color: #fff8dc;">u8</span></code>.</li>
+<li>By default, numeric variables without an explicit type are assigned type
+<code class="src src-rust"><span style="color: #FFE261; background-color: #fff8dc;">i32</span></code>, if possible.</li>
+<li>Numbers have the expected arithmetic operations <code class="src src-emacs-lisp"><span style="color: #000000; font-weight: bold;">+</span>, <span style="color: #000000; font-weight: bold;">-</span>, <span style="color: #000000; font-weight: bold;">/</span>, <span style="color: #000000; font-weight: bold;">%</span></code> (remainder).</li>
+<li>Underscores can be inserted in numeric literals to improve readability,
+e.g. <code>1_000</code> is the same as <code>1000</code>, and <code>0.000_001</code> is the same as <code>0.000001</code>.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: <a href="https://alhassy.github.io/">Musa Al-hassy</a></p>
+<p class="date">Created: 2022-04-07 Thu 09:26</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

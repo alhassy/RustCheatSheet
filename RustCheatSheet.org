@@ -1,0 +1,1699 @@
+* Preamble :ignore:
+:PROPERTIES:
+:CUSTOM_ID: Preamble
+:END:
+# (setq playground/active-p t playground/language "rust")
+
+#+EXPORT_FILE_NAME: index.html
+# blog:header
+#+HTML_HEAD: <link href="https://alhassy.github.io/org-notes-style.css" rel="stylesheet" type="text/css" />
+#+HTML_HEAD: <link href="https://alhassy.github.io/floating-toc.css" rel="stylesheet" type="text/css" />
+#+TOC: headlines 2
+
+#+TITLE: Rust CheatSheet
+# +SUBTITLE: ---Incomplete Draft---
+#+MACRO: blurb A reference for Rust TODO
+#+AUTHOR: [[https://alhassy.github.io/][Musa Al-hassy]]
+#+EMAIL: alhassy@gmail.com
+# +TODO: Todo | spacing LaTeX
+# +INCLUDE: ~/CheatSheet/CheatSheetSetup.org
+# +OPTIONS: broken-links:auto toc:nil
+# let's always break newlines, with a ‘↪’ indicated new lines.
+#+LaTeX: \setminted[html]{fontsize=\footnotesize, breaklines}
+#+latex_header: \usepackage{newunicodechar}
+#+latex_header: \newunicodechar{⋯}{\ensuremath{\cdots}}
+#+latex_header: \newunicodechar{𝒳}{\ensuremath{\mathcal{X}}}
+#+latex_header: \newunicodechar{𝒴}{\ensuremath{\mathcal{Y}}}
+#+latex_header: \newunicodechar{⟩}{\ensuremath{\mathcal{\langle}}}
+#+latex_header: \newunicodechar{⟨}{\ensuremath{\mathcal{\rangle}}}
+#+latex_header: \newunicodechar{⇒}{\ensuremath{\mathcal{\Rightarrow}}}
+#+latex_header: \newunicodechar{“}{``}
+#+latex_header: \newunicodechar{”}{''}
+
+#+latex_header: \usepackage{MnSymbol,wasysym}
+#+latex_header: \newunicodechar{😻}{\smiley{}}
+
+# (maybe-clone "https://github.com/armkeh/unicode-sty.git")
+#+LATEX_HEADER: \usepackage{\string~"/unicode-sty/unicode"}
+
+#+PROPERTY: header-args:rust  :tangle rust-cheat-sheat.rs :exports code
+
+* COMMENT Run
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Run
+:END:
+#  [[elisp:(let ((rs (car (org-babel-tangle)))) (async-shell-command (format "rustc-A dead_code %s; ./%s" rs (f-base rs)))) ][Run!]] :boom:❗
+# C-x n s  ⇐  Do this first!
+
+# ("" "titletoc" nil) ⇒ causes problems!
+# (pop org-latex-default-packages-alist)
+
+* TODO COMMENT Emacs Setup                                                   :ignore:
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Emacs-Setup
+:END:
+
+;; To investigate
+;; https://github.com/grafov/rust-playground
+
+
+;; started from http://emacs-bootstrap.com/
+
+;; rust-mode
+;; https://github.com/rust-lang/rust-mode
+
+(use-package rust-mode
+  :bind ( :map rust-mode-map
+               (("C-c C-t" . racer-describe)
+                ([?\t] .  company-indent-or-complete-common)))
+  :config
+  (progn
+    ;; add flycheck support for rust (reads in cargo stuff)
+    ;; https://github.com/flycheck/flycheck-rust
+    (use-package flycheck-rust)
+
+    ;; cargo-mode for all the cargo related operations
+    ;; https://github.com/kwrooijen/cargo.el
+    (use-package cargo
+      :hook (rust-mode . cargo-minor-mode)
+      :bind
+      ("C-c C-c C-n" . cargo-process-new)) ;; global binding
+
+    ;;; separedit ;; via https://github.com/twlz0ne/separedit.el
+    (when nil use-package separedit
+      :straight (separedit :type git :host github :repo "idcrook/separedit.el")
+      :config
+      (progn
+        (define-key prog-mode-map (kbd "C-c '") #'separedit)
+        (setq separedit-default-mode 'markdown-mode)))
+
+
+        ;; TODO:NICE!
+    ;;; racer-mode for getting IDE like features for rust-mode
+    ;; https://github.com/racer-rust/emacs-racer
+    (use-package racer
+      :hook (rust-mode . racer-mode)
+      :config
+      (progn
+        ;; package does this by default ;; set racer rust source path environment variable
+        ;; (setq racer-rust-src-path (getenv "RUST_SRC_PATH"))
+        (defun my-racer-mode-hook ()
+          (set (make-local-variable 'company-backends)
+               '((company-capf company-files)))
+          (setq company-minimum-prefix-length 1)
+          (setq indent-tabs-mode nil))
+
+        (add-hook 'racer-mode-hook 'my-racer-mode-hook)
+
+        ;; enable company and eldoc minor modes in rust-mode (racer-mode)
+        (add-hook 'racer-mode-hook #'company-mode)
+        (add-hook 'racer-mode-hook #'eldoc-mode)))
+
+    (add-hook 'rust-mode-hook 'flycheck-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-rust-setup)
+
+    ;; format rust buffers on save using rustfmt
+    (add-hook 'before-save-hook
+              (lambda ()
+                (when (eq major-mode 'rust-mode)
+                  (rust-format-buffer))))))
+
+)
+
+#+end_src
+
+#+RESULTS:
+
+#+begin_src rust :exports none
+fn main() {
+    let x = 42;
+    println!("{0}, this is {1}.", x, "bye");
+}
+#+end_src
+
+#+RESULTS:
+: 42, this is bye.
+
+* Hello World!
+:PROPERTIES:
+:CUSTOM_ID: hello-world
+:END:
+
+  #+latex: {\color{white}.}
+
+  #+latex: \vspace{-2.5em}
+  #+begin_parallel 2
+
+#+begin_src rust :tangle hello_world.rs
+fn main() {
+    println!("Hello, world!");
+}
+#+end_src
+
+
+#+columnbreak:
+
+Compile and run this with \\
+src_emacs-lisp[:exports code]{rustc hello_world.rs; ./hello_world}
+#+end_parallel
+
+The src_emacs-lisp[:exports code]{main} function is special: It is always the first code that runs in
+every program.  For now, know that names ending in src_emacs-lisp[:exports code]{!} are “macros”
+---special functions that transform code.
+
+**   ~cargo new~
+:PROPERTIES:
+:CUSTOM_ID: cargo-new
+:END:
+
+Packages of code are referred to as [[https://crates.io/][/crates/]] ---which are shipped with /cargo/,
+the build tool and package manager. Cargo is the most convenient way to create a
+new Rust project.
+
+# The new command takes the name of a project. Once we execute it, we'll see that
+# it has generated a bunch of files including a Git repository, a ~src~ directory
+# and a ~Cargo.toml~ file.
+
+Running ~cargo new my-first-program~ creates a folder ~my-first-program~ with a
+bunch of stuff in it. Importantly, it has a ~src/main.rs~ file which is our entry
+point (which prints ‘Hello, world!’) and ~Cargo.toml~ which is a configurations
+file ---e.g., to keep track of what external packages our program requires. We
+can now do ~cd my-first-program; cargo run~ to compile and run our program in one
+go: ~Hello, world!~ is printed.
+
+To install a new crate, simply add it to the end of the ~[dependencies]~ list in
+~Cargo.toml~. For example, open ~Cargo.toml~ and [[https://crates.io/crates/rand][at the very end, add]] ~rand =
+"0.8.5"~.  Next time you do =cargo run= it will install the ~rng~ randomness package.
+
+# The Cargo file is a package file that specifies the name of the project, its
+# version, the author's name and its email address and the edition or version of
+# the Rust programming language. Additionally, we can specify other configuration
+# values such as dependencies or dev-dependencies.
+
+** Let's see a full program viz a Number Guessing Game
+:PROPERTIES:
+:CUSTOM_ID: Let's-see-a-full-program-viz-a-Number-Guessing-Game
+:END:
+
+#+latex: \newline
+# Let's see a full program viz a Number Guessing Game:
+
+#+latex: \vspace{-.5em}
+#+ATTR_LATEX: :options fontsize=\scriptsize
+
+# Run ~cargo new game; cd game; cargo install rng~ to make a new project and install
+
+# Then place the following code in ~main.rs~ and run it with ~cargo run~.
+
+#+begin_src rust
+use std::io;   // Use the standard input-output library
+use rand::Rng; // Use Random Number Generator trait, needs “rand” crate
+use std::cmp::Ordering; // Enumeration to denote result of comparisons
+
+fn main() {
+    println!("Guess the number!");
+    // Ranges “m..n” are all integers i with m ≤ i < n.
+    let secret_number = rand::thread_rng().gen_range(1..101);
+
+    // The “loop” keyword creates an infinite loop.
+    loop {
+        println!("Please input your guess.");
+
+        // “mut”able variable, bound to an empty String object
+        let mut guess = String::new();
+
+        // Get a handle to the standard input for your terminal.
+        // Then, stick user input into (a mutable reference to) “guess”.
+        // If something goes wrong, show an informative message.
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
+
+        // Instead of “expect”, we can use “match” to move from
+        // crashing on an error to instead handling the error...
+
+        /* Shadow the “guess” variable to avoid using a new variable name.
+
+           Handle the possibility of parse errors using Pattern Matching:
+           We try to make an unsigned integer out of the user's string input;
+           if no number is parsed, we ask the user to guess again. */
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_)  => continue // Restarts the loop
+        };
+        // Alternatively: guess.trim().parse().unwrap() tries to get “num”; otherwise it crashes.
+        // “unwrap” and “expect” are useful for quick development, but otherwise dangerous to use.
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less    => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
+            Ordering::Equal   => { println!("You win!"); break }, // Exit the loop
+        }
+    }
+}
+#+end_src
+
+/Exercise!/ Instead of the src_rust[:exports code]{continue} on parse errors,
+src_rust[:exports code]{use std:process} library to quit the program with
+src_rust[:exports code]{process::exit(1)} after providing a useful message to
+the user.
+
+/Exercise!/ Notice that the first src_emacs-lisp[:exports code]{guess} variable had its /string/ type
+inferred.  If we remove the explicit /numeric/ type annotation from the second
+src_emacs-lisp[:exports code]{guess} then src_emacs-lisp[:exports code]{parse} wouldn't know what kind
+of value is being parsed and we get a compile error. Remove the explicit type
+annotation by specialising src_emacs-lisp[:exports code]{parse} to get /numeric/ ~u32~ values using the
+so-called “turbofixh syntax”: src_rust[:exports code]{ parse::<u32>() }.
+
+* The “::” Notation: Types as Namespaces and General Imports
+:PROPERTIES:
+:CUSTOM_ID: the-notation-types-as-namespaces-and-general-imports
+:END:
+
+Dots are generally used to get field from an object such as ~p.0~ for pairs; the
+double-colon is used similarly but for namespaces as in ~library::file::method~.
+# scope resolution operator
+
+#+begin_src rust
+fn main() {
+    assert!(std::cmp::min(3, 8) == 3);
+}
+#+end_src
+
++ src_rust[:exports code]{use} directives can be used to “bring into scope” names from other namespaces.
+   #+begin_src rust
+// use std::cmp::min;        // Single import
+// use std::cmp::{max, min}; // Multiple imports
+use std::cmp::*;             // Imports everything
+fn main() {
+    assert!(min(5, 5) == max(5, 5));
+}
+#+end_src
+
++ Types are namespaces too, and methods can be called as regular functions:
+   #+begin_src rust
+fn main() {
+    assert!("hola".len() == str::len("hola"));
+}
+#+end_src
+  In-general, ~object.method(args) ≡ type::method(object, args)~.
+* A First look at Ownership: Why ~let x = ⋯; f(x); f(x)~ crashes
+:PROPERTIES:
+:CUSTOM_ID: a-first-look-at-ownership-why-let-x-f-x-f-x-crashes
+:END:
+# Understanding basic Ownership and Borrowing in Rust
+
+# NOTE: Ownership and borrowing are so important to Rust, might as well get an early
+# glimpse early on. If anything it sets the stage for the “Types” section below.
+
+Rust comes with a feature called /ownership/, which aims to prevent us from
+writing memory unsafe code.
+
+The following program looks like it should work without any problems...
+#+begin_src rust -r -n
+fn main() {
+    let mut hi = "hello".to_string(); // We want an object; not a literal primitive. (ref:hi-def)
+
+    fn speak(words: String) {
+        println!("{}", words)
+    }
+
+    speak(hi); (ref:first-call)
+    // speak(hi); // Whoops, the *value* of “me” has moved out of this *variable*! (ref:second-call)
+
+    hi = "yup".to_string(); (ref:all-good)
+    speak(hi)
+}
+#+end_src
+
+#+RESULTS:
+: hello
+: yup
+
+*Ownership* means /variables own their values/:
++ Line [[(hi-def)]]: The variable ~hi~ owns the string value ~"hello~."
++ Line [[(first-call)]]: The value ~"hello"~ is passed into the function ~speak~, and so
+  /ownership of the value has moved/. In-particular, ~hi~ no longer owns a value and
+  so cannot be /accessed/ after this line.
++ Line [[(second-call)]]: We try to call the function ~speak~ with a variable that has
+  no value and so we get a /compile-time/ error.
++ Line [[(all-good)]]: We can fix this by letting the variable ~hi~ /own/ a value,
+  then we can use it again.
+
+If we do need access to a variable's value in multiple function calls, we will
+have to pass it by /reference/ instead of by value.
+
+#+begin_src rust -r -n
+fn main() {
+    let mut hi = "hello".to_string();
+
+    fn speak(words: &String) { (ref:borrow)
+        println!("{}", words)
+    }
+
+    speak(&hi);  // Works first time. (ref:use)
+    speak(&hi);  // Works second time!
+}
+#+end_src
+
+#+RESULTS:
+: hello
+: hello
+
+*Borrowing* means /temporarily owning something/: Line [[(borrow)]] says this function
+wants a /reference/ to a string value; then line [[(use)]] calls the function by
+making a reference using the “borrow operator” ~&~.
+
++ A *reference* is a type that references another value in memory.
+   # - They are created using the “borrow operator” ~&~.
+  - They're useful when we don't want to pass “ownership” to control structures
+    (such as for-loops) or functions.
+   :References_mwe:
+#+begin_src rust
+fn main() {
+    let mut x = 12; // :      i32
+    let r = &mut x; // : &mut i32
+
+    *r = 45;
+    assert_eq!(x, 45);
+}
+#+end_src
+
+#+RESULTS:
+
+:end:
+
+* Types
+:PROPERTIES:
+:CUSTOM_ID: types
+:END:
+
+ Rust is a statically & strongly typed language: It knows the types of all
+ variables at compile time ---it can infer them if you don't write them--- and
+ it does no implicit type coercions.
+
+#+macro: go src_rust[:exports code]{$1}
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| Type                       | Explanation                           ; Example value                                                         |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| Integers ~i32, u32~          | Number without decimals               ; ~123~                                                                   |
+| Floats ~f32, f64~            | Numbers with decimals                 ; =-1.23, 1e4=                                                            |
+| Booleans ~bool~              | Truth values                          ; ~true, false, !p, p && q, p ∥ q~                                        |
+| Characters ~char~            | Unicode characters                    ; ~'t', '😻'~                                                             |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| Tuples ~(τ₀, τ₁, …, τₙ₋₁)~   | $n$ things of different types         ; ~(1, 'a', 2.3)~                                                         |
+| Unit ~()~                    | A “zero-tuple”; denotes “done”; value is written ~()~                                                           |
+| Arrays ~[τ; n]~              | $n$ things of the same type           ; ~[1, 2, 3]~                                                             |
+| Vectors ~Vec<τ>~             | Like arrays, but can increase in size ; ~vec![1, 2, 3]~                                                         |
+| Slices ~[τ]~               | Slices are similar to arrays, but their length is not known at compile time.                                  |
+| Structures                 | A record, hashmap, lightweight class; key-value pairs                                                         |
+| Enums                      | Constants; algebraic data-types                                                                               |
+| Ranges                     | $m..n$ is the sequence of integers $i$ with $m ≤ i < n$.                ; ~3..7~                                |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| Functions ~(τ₁, …, τₙ) → τ~  | Transform τᵢ into a τ                 ; @@latex:{\scriptsize@@ ~fn first<A, B>(a:A, b:B) -> A { a }~ @@latex:}@@ |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| [Read-only] References ~&τ~  | Refer to an object, without owning it ; ~let s = ⋯; &s~ ;; ~let x = &4~                                           |
+| Mutable references ~&mut τ~  | Borrow an object and change it        ; ~let mut s = ⋯; &mut s~ ;; ~let x = &mut 4~                               |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+| String Slices, ~&str~        | A string literal that can only be borrowed, but not owned/mutated; =let five = "5"=                             |
+| [Growable] Strings, ~String~ | Strings that can grow in size; essentially ~Vec<&str>~;; ~let five = "5".to_string()~                             |
+|----------------------------+---------------------------------------------------------------------------------------------------------------|
+
++ *Slices* are the answer to “What is the input type of a function that consumes
+  arrays /but/ doesn't know their length?” Slices act like temporary views into an
+  array or a vector.
+
++ Rust vectors are [[https://hashrust.com/blog/arrays-vectors-and-slices-in-rust/#:~:text=How%20does%20a,the%20old%20array.][array-lists]]: They're arrays that double in size whenever
+  more space is needed.
+
++ Range Example: ~(1..5).for_each(|i| println!("{}", i));~
+
+# A /scalar/ type represents a single value; e.g., numbers, booleans, and
+# characters. Whereas /compound types/ can group multiple values into one type;
+# e.g., tuples and arrays.
+
++ The unit type, ~()~, is often used as the /return type/ of functions that have
+  side-effects, such as printing to the screen. Everything has to have a type, so
+  ~()~ (which can be read “done”) can be that type. The default return type of
+  functions is ~()~, unless explicitly indicated otherwise.
+
++ For 𝓃 in {8, 16, 32, 64}, a number of bits, there are /signed integers/ ~i𝓃~ which
+  can store numbers from $-2^{n}$ to $2^{n - 1} - 1$ inclusive, and /unsigned
+  integers/ ~u𝓃~ which store numbers from $0$ to $2^{n}$.
+
+  # An integer is a number without a fractional component; e.g., ~u32~ and ~i32~.
+
+  - These types provide bounds on numbers; e.g., src_rust[:exports code]{let it:
+    u8 = 256} results in a compile error since 256 is out of range for
+    src_rust[:exports code]{u8}.
+  - By default, numeric variables without an explicit type are assigned type
+    src_rust[:exports code]{i32}, if possible.
+  - Numbers have the expected arithmetic operations src_emacs-lisp[:exports code]{+, -, /, %} (remainder).
+  - Underscores can be inserted in numeric literals to improve readability,
+    e.g. =1_000= is the same as =1000=, and =0.000_001= is the same as =0.000001=.
+
+  :More:
+      #+begin_src rust
+  let a_float: f64 = 1.0;  // Regular annotation
+   let an_integer   = 5i32; // Suffix annotation
+
+  // Use underscores to improve readability!
+  println!("One million is written as {}", 1_000_000u32);
+  #+end_src
+
+  #  Functions can use tuples to return multiple values, as tuples can hold any number of values.
+
+     We need to tell the compiler the type of the literals we use. For now, we'll use
+     the u32 suffix to indicate that the literal is an unsigned 32-bit integer, and
+     the i32 suffix to indicate that it's a signed 32-bit integer.
+
+    # There is also ~isize~ which are numeric types that specialise to ~i32~ /or/ ~i64~,
+    # depending on whether we're compiling on a 32-bit machine or a 64-bit
+    # machine. Likewise for ~usize~.
+  :End:
+
+* COMMENT Declarations
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Declarations
+:END:
+
+Bindings are immutable by default, which means their values can't be changed;
+use src_rust[:exports code]{mut} to allow changes.
+
+#+begin_src rust
+fn main() {
+    let _x     = 10;
+    let y: i32 = 20; // With explicit type anotation (integer 32-bit)
+    let y      = 'a'; // ‘Shadow’ y
+    let mut z  = 12; // A mutable (changeable) variable
+    z = 13;
+    let _ = println!("{0} and {1}", y, z); // Ignore result
+}
+#+end_src
+
+Unused bindings are likely an error, so the compiler warns about them ---/unless/
+a name starts with an underscore.
+
+‘Shadowing’ (overriding) let's us /reuse/ names: Mutable variables can change
+their value /only/, whereas shadowing means we can change the value /and/ the type.
+Shadowing is done with src_rust[:exports code]{let}, whereas mutable variables
+can be assigned to directly.
+
+With shadowing, src_rust[:exports code]{let x = f(x)}, we can perform a few
+transformations on a value but have the variable be immutable after those
+transformations have been completed.
+
+# The other difference between mut and shadowing is that because we’re effectively
+# creating a new variable when we use the let keyword again, we can change the
+# type of the value but reuse the same name.
+
+* COMMENT Block, Expressions, and Functions
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Block-Expressions-and-Functions
+:END:
+
+Blocks are chunks of code surrounded by curly braces. They introduce a /new scope/
+(shadowing any variables in the parent scope) and are /expressions/ and so have a
+value ---being the value of the final expression within the block.
+
+#+begin_parallel
+
+#+begin_src rust
+fn main() {
+    let z = {
+        let (x, y) = (1, 2);
+        x + y
+    };
+    assert!(z == 3);
+}
+#+end_src
+
+#+columnbreak:
+
+If the block's expression ends in a semicolon src_emacs-lisp[:exports code]{;},
+then it becomes a statement and so the final line would become:
+src_rust[:exports code]{assert!(z == ());}.
+
+#+end_parallel
+
+/Statements/ are instructions that perform some action and do not return a value
+---which is expressed by ~()~, an empty tuple. /Expressions/ evaluate to a resulting
+value; e.g., blocks ~{}~ are used to create new scopes but are expressions, as are
+function (and macro) calls.
+
+# Statements do not return values; e.g., ~let x = 5~ does not return anything.
+#    let x = println!("hi"); // In such cases, we use “let _ = ⋯”.
+#    assert!(x == ());
+
+A /function/ is a block that is /named, parameterised, and typed/.  It is declared
+with the src_rust[:exports code]{fn} keyword; its arguments /must/ be typed and
+the resulting type of the function is declared with ~->~ (omitted when void).
+The types are required so that Rust can infer them at use sites.
+
+# Requiring type annotations in function definitions means the compiler almost
+# never needs you to use them elsewhere in the code to figure out what you mean.
+
+#+begin_src rust
+// Functions can have multiple type parameters
+fn first<A, B>(a: A, b: B) -> A {
+    a
+}
+// To require ‘A’ implements interfaces ‘I₁’ and ‘I₂’,
+// we write ‘first<A: I₁ + I₂, B>’.
+
+fn main() {
+    assert!('a' == first('a', 1));
+    assert!('a' == first::<char, i32>('a', 1)); // Explicit type application
+}
+#+end_src
+
++ Rust doesn’t care where you define your functions, only that they’re defined
+  somewhere.
+  #+latex: \hfill
+  We could have defined src_rust[:exports code]{first} /after/ src_emacs-lisp[:exports code]{main} or
+  /within/ src_emacs-lisp[:exports code]{main}.
+
++ A function's return value, like a block, is the final expression.  But one can
+  use src_rust[:exports code]{return expr;} to exit “in the middle” of a
+  function.
+
+* COMMENT Tuples and Arrays
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Tuples-and-Arrays
+:END:
+
+# TUPLES
+# A tuple is a general way of grouping together a number of values with a variety
+# of types into one compound type. Tuples have a fixed length: once declared, they
+# cannot grow or shrink in size.
+
+# ARRAYS
+# Another way to have a collection of multiple values is with an array. Unlike a
+# tuple, every element of an array must have the same type. Arrays in Rust are
+# different from arrays in some other languages because arrays in Rust have a
+# fixed length, like tuples.
+
+Both tuples and arrays collect multiple values and have fixed (non-growable)
+sizes; the only difference is that the values in a tuple can be of a different
+type whereas an array requires them to all have the same type.
+
+#+begin_src rust :prologue
+fn main() {
+    // Create: Tuples, different types allowed
+    let p = ('a', 1, 2.3, "bye");
+    let q: (char, i32) = ('a', 12); // Explicit type annotation
+
+    // Create: Arrays, can only be same type
+    let a = [1, 2, 3];
+    let b : [char; 2] = ['x', 'y']; // Explicit type annotation
+
+    // Read: Tuples, with “ .𝒾 ” notation
+    // Read: Arrays, with “ [𝒾] ” notation
+    println!("{0}, {1}, {2}", q.0, p.3, a[1]); // p.4, a[4] ⇒ Error!
+
+    // Both can be *destructured*, but must match in length
+    let (_, me, _, you) = p; // ≈  let me = p.1; let you = p.3;
+    let [_, them, _]    = a; // ≈  let them = a[1];
+
+    // Example: A super simple way to swap
+    let x = 1; let y = 2;
+    assert!(x == 1 && y == 2);
+    let (y, x) = (x, y);       // Shadowing
+    assert!(x == 2 && y == 1);
+
+    // Shorthand for constant arrays
+    assert!([2, 2, 2, 2] == [2; 4]);
+}
+#+end_src
+
+~[τ; n]~ is the type of arrays of length $n$ with elements from type τ.
+#+latex: \newline
+If τ is a value, then there is only one possible array: ~[τ, τ, ..., τ]~ (/n/-many
+times).
+
+# Arrays are useful when you have a list whose length you do not expect to change
+# ---e.g., a list of the months.
+#
+# A vector is a similar collection type provided by the standard library that is
+# allowed to grow or shrink in size. If you’re unsure whether to use an array or a
+# vector, you should probably use a vector. Chapter 8 discusses vectors in more
+# detail.
+
+# Invalid array index ⇒ Immediate program exit; a run-time error.
+#
+# The program resulted in a runtime error at the point of using an invalid value
+# in the indexing operation. The program exited at that point with an error
+# message and didn't execute the final println!. When you attempt to access an
+# element using indexing, Rust will check that the index you’ve specified is less
+# than the array length. If the index is greater than or equal to the array
+# length, Rust will panic. This check has to happen at runtime, especially in this
+# case, because the compiler can't possibly know what the value a user running the
+# code will later enter.
+
+
+TODO: Include this example above?
+#+begin_src rust
+fn main() {
+    let names = ["me", "you", "theme"];
+    for name in &names { println!("{}", name)}
+}
+#+end_src
+
+* COMMENT [[https://doc.rust-lang.org/book/ch05-02-example-structs.html][Structures]] ---“Tuples with /named and unordered/ components”
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components
+:END:
+
+Structures /provide ways to group several values into a single value./
+/Conceptually, this allows us to put a bunch of related things in a bag and run
+around with the bag, instead of wrapping our arms around all of the individual/
+/things and trying to hold on to them separately./ ---[[https://eloquentjavascript.net/04_data.html#p_78ZfHX5x1B][Eloquent JavaScript]]
+
+A src_rust[:exports code]{struct}ure is also known as a /record, hashmap,
+association list, lightweight-class, JSON object/.
+
+[Note that tuples, arrays, enums, and ranges can all be /thought of/ as
+specialisations of the idea of structures. That is, structures are powerful
+enough to implement the previously mentioned compound types.]
+
+ #+begin_src rust :prologue "fn main() {" :epilogue "}"
+// ⟨0⟩ Forming a new type
+#[derive(Debug)]   // Simple debug printing
+struct Person {
+    name : String,
+    job  : String,
+    age  : u32
+}
+
+// ⟨1⟩ Introducing a value of that type
+let mut job = String::from("farmer");
+let mut jay = Person {
+    name: String::from("jason"),
+    age: 72,
+    job // Shorthand for:   job: String::form("farmer")
+};
+
+// ⟨2⟩ Eliminating a value of that type by destructuring
+// [Ownership moves: If “jay.field” is an object, it has moved to “field”]
+// [Namely, after this line, /read access/ of “jay.name” is invalid.]
+let Person {name, age, ..} = jay; // The “..” are to ignore the rest
+
+// ⟨3⟩ Updating a field
+jay.name = String::from("jasim");     // Writing to a field
+job = String::from("labourer");       // Has no effect on “jay”
+assert!(jay.name == "jasim" && name == "jason" && jay.job == "farmer");
+
+// Using the automatic debug printing
+println!("Jay is {:?}", jay);
+
+// ⟨1⟩' Creating instances from instances; “prototyping”!
+// [Read: kathy is like jay but has a different name.]
+let kathy = Person {name: String::from("Kalthum"), ..jay};
+
+// We can also make unnamed fields, and use tuple indexing
+struct Mine(String, u32);
+let mut it = Mine(String::from("hola"), 23);
+it.1 = 12;
+ #+end_src
+
+ src_rust[:exports code]{// ⟨1⟩}
+ Variable names in a struct literal, like src_emacs-lisp[:exports code]{job},
+ denote a shorthand for a field with the same name and (cloned) /value/, but
+ otherwise is no longer related to that binding ---as such, the mutability of
+ the variable and the struct literal may be distinct. This is useful for when we
+ want multiple literals to have the same field.
+
+--------------------------------------------------------------------------------
+
+It’s possible for structs to store /references/ ---such as src_rust[:exports
+code]{&str} values--- to data owned by something else, but to do so requires the
+use of “lifetimes”, a Rust feature that ensures that the data referenced by a
+struct is valid for as long as the struct is.
+
+--------------------------------------------------------------------------------
+
+/Methods/ are different from functions in that they’re defined within the context
+of a struct (or an enum or a trait object, which we cover in Chapters 6 and 17,
+respectively), and their first parameter is always self, which represents the
+instance of the struct the method is being called on.
+
+The /method syntax/ goes after an instance: we add a dot followed by the method name, parentheses, and any arguments.
+
+In the signature for area, we use &self instead of rectangle: &Rectangle because
+Rust knows the type of self is Rectangle due to this method’s being inside the
+impl Rectangle context. Note that we still need to use the & before self, just
+as we did in &Rectangle. Methods can take ownership of self, borrow self
+immutably as we’ve done here, or borrow self mutably, just as they can any other
+parameter.
+
+We’ve chosen &self here for the same reason we used &Rectangle in the function
+version: we don’t want to take ownership, and we just want to read the data in
+the struct, not write to it. If we wanted to change the instance that we’ve
+called the method on as part of what the method does, we’d use &mut self as the
+first parameter. Having a method that takes ownership of the instance by using
+just self as the first parameter is rare; this technique is usually used when
+the method transforms self into something else and you want to prevent the
+caller from using the original instance after the transformation.
+
+
+#+begin_src rust
+// The `derive` attribute automatically creates the implementation
+// required to make this `struct` printable with `fmt::Debug`.
+#[derive(Debug)]
+struct DebugPrintable(i32);
+#+end_src
+
+
+// To use the `{}` marker, the trait `fmt::Display` must be implemented
+// manually for the type.
+- https://doc.rust-lang.org/rust-by-example/hello/print/print_display.html
+
+** COMMENT Structs
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Structs
+:END:
+
+#+begin_src rust :tangle no
+fn main() {
+    // Structs are declared with the struct keyword:
+    struct Number {
+        odd: bool,
+        value: i32,
+    }
+
+    // They can be initialized using struct literals:
+    let n = Number {
+        odd: true,
+        value: 11,
+    };
+
+    // Structs, like tuples, can be destructured.
+    let Number { odd, .. } = n;
+
+    // Projection
+    assert!(odd && n.value == 11);
+
+    // Mutable updates
+    let mut _m = Number { ..n }; // Copy n's data
+    _m.value = 32;
+
+    // let patterns can be used as conditions in “if”
+    if let Number { odd: true, .. } = n {
+        "yay"
+    } else {
+        "nay"
+    };
+
+    // match arms are also patterns, just like if let:
+    // match n { Number {odd, ..} => "has an ODD field", _ => "nope"};
+}
+#+end_src
+
+#+RESULTS:
+
+# + ~if p.x₁ == y₁ && p.x₂ == y₂ && p.x₃ == y₃ ⋯  ≈  if let P {x₁: y₁, x₂: y₂, x₃: y₃, ..} = p ⋯~
+
+You can declare methods on your own types:
+#+begin_src rust
+struct Number { odd: bool,
+        value: i32,
+    }
+
+impl Number {
+    fn is_strictly_positive(self) -> bool {
+        self.value > 0
+    }
+}
+
+fn main() {
+    let n = Number {
+        odd: true,
+        value: 11,
+    };
+    assert!(n.is_strictly_positive());
+    println!("HOLA");
+}
+#+end_src
+
+Structs can be generic too:
+#+begin_src rust
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+
+fn main() {
+    assert!(
+        (Pair {
+            first: 1,
+            second: 'b'
+        })
+        .first
+            == 1
+    );
+}
+#+end_src
+
+*** COMMENT {:?}
+:PROPERTIES:
+:CUSTOM_ID: COMMENT
+:END:
+
+  The println! macro call will now look like println!("rect1 is {:?}",
+  rect1);. Putting the specifier :? inside the curly brackets tells println! we
+  want to use an output format called Debug. The Debug trait enables us to print
+  our struct in a way that is useful for developers so we can see its value
+  while we’re debugging our code.
+
+we’ll see the following output:
+
+
+$ cargo run
+   Compiling structs v0.1.0 (file:///projects/structs)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/structs`
+rect1 is Rectangle { width: 30, height: 50 }
+Nice! It’s not the prettiest output, but it shows the values of all the fields for this instance, which would definitely help during debugging. When we have larger structs, it’s useful to have output that’s a bit easier to read; in those cases, we can use {:#?} instead of {:?} in the println! string. When we use the {:#?} style in the example, the output will look like this:
+
+
+$ cargo run
+   Compiling structs v0.1.0 (file:///projects/structs)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/structs`
+rect1 is Rectangle {
+    width: 30,
+    height: 50,
+}
+
+* TODO COMMENT Formatted text / print
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Formatted-text-print
+:END:
+
+Printing is handled by a series of macros defined in std::fmt some of which include:
+
+- format!: write formatted text to String
+- println!: same as format! but the text is printed to the console (io::stdout).
+
+println!("You guessed: {}", guess); // Format string
+// Likewise println!("{} and {}", x, y) prints multiple variables.
+
+src_rust[:exports code]{ format! } is the same as src_rust[:exports code]{
+println! } but it makes a formatted text as a src_rust[:exports code]{ String }
+value.  Merge the final src_rust[:exports code]{ match } value
+# print!: same as format! but the text is printed to the console (io::stdout).
+
+#+begin_src rust
+fn main() {
+    // In general, the `{}` will be automatically replaced with any
+    // arguments. These will be stringified.
+    println!("{} days", 31);
+
+    // Without a suffix, 31 becomes an i32. You can change what type 31 is
+    // by providing a suffix. The number 31i64 for example has the type i64.
+
+    // There are various optional patterns this works with. Positional
+    // arguments can be used.
+    println!("{0}, this is {1}. {1}, this is {0}", "Alice", "Bob");
+
+    // As can named arguments.
+    println!("{subject} {verb} {object}",
+             object="the lazy dog",
+             subject="the quick brown fox",
+             verb="jumps over");
+
+ println!("{1:?} {0:?} is the {actor:?} name.",
+             "Slater",
+             "Christian",
+             actor="actor's");
+
+}
+#+end_src
+
+- Uses the {:?} marker. Format text for debugging purposes.
+- Uses the {} marker. Format text in a more elegant, user friendly fashion.
+- Rust also provides "pretty printing" with {:#?}.
+
+* TODO COMMENT Understanding Ownership
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Understanding-Ownership
+:END:
+
+Ownership is Rust’s most unique feature, and it enables Rust to make memory
+safety guarantees without needing a garbage collector. Therefore, it’s important
+to understand how ownership works in Rust. In this chapter, we’ll talk about
+ownership as well as several related features: borrowing, slices, and how Rust
+lays data out in memory.
+
+*my/doc/garbage-collection* All programs have to manage the way they use a
+computer’s memory while running. Some languages have garbage collection that
+constantly looks for no longer used memory as the program runs; in other
+languages, the programmer must explicitly allocate and free the memory. Rust
+uses a third approach: memory is managed through a system of ownership with a
+set of rules that the compiler checks at compile time. None of the ownership
+features slow down your program while it’s running.
+
+*Ownership Rules*
++ Each value in Rust has a variable that’s called its owner.
++ There can only be one owner at a time.
++ When the owner goes out of scope, the value will be [[https://doc.rust-lang.org/std/ops/trait.Drop.html#tymethod.drop][dropped]] (“it's memory is
+  garbage collected”).
+
+We’ve already seen string literals, where a string value is hardcoded into our
+program. String literals are convenient, but they aren’t suitable for every
+situation in which we may want to use text. One reason is that they’re
+immutable. Another is that not every string value can be known when we write our
+code: for example, what if we want to take user input and store it? For these
+situations, Rust has a second string type, String. This type is allocated on the
+heap and as such is able to store an amount of text that is unknown to us at
+compile time. You can create a String from a string literal using the from
+function, like so:
++ let s = String::from("hello");
+
+#+begin_src rust
+fn main() {
+    let mut s = String::from("hello");
+    s.push_str(", world!"); // push_str() appends a literal to a String
+    assert!(s == "hello, world!")
+}
+#+end_src
+
+Just as ~let mut x = 12~ means we can later declare ~x = 13~, the /variable is
+mutable/ but we did not change the literal “12”.  Likewise, ~str~ are values that
+cannot be changed and are constructed by writing ~"~ then any text then ~"~; that is
+all. (Other languages call these ‘symbols’.)
+
+For scalar variables ~x~ and ~y~, the declaration ~x = y~ means “copy the value of ~y~
+and stick it in ~x~.” For compound structures, ~x = y~ means “since there can only
+be one owner, make ~x~ refer to the object that ~y~ refereed to, and make ~y~ refer to
+nothing”, and one says “[the object pointed to by] y has *moved* to x” ---use of ~y~
+is now a compile-time error.  Copying is very expensive for objects, and sharing
+an object via two aliases can be confusing, so ownership is changed instead.  If
+you really do want to (deeply) copy an object: ~x = y.clone()~.
+
+Tuples/arrays of scalars /copy/, but tuples/arrays involving non-scalars /move/.
+
+*Ownership and Functions.* Passing a variable to a function will move or copy,
+just as assignment does.  That is, ~f(x)~ will take ownership if ~x~ is a variable ~x~
+of a compound type, and otherwise a copy of ~x~ is performed.  In particular,
+~f(x); x~ will result in an error for compound ~x~, since ~x~'s object /moved/ when ~f~
+was called and now ~x~ is invalid for use. In contrast, ~ok~ below takes ownership
+of ~b~ but then returns ownership to (a shadowing of) ~b~.
+#+begin_src rust
+// Three ways to get the length of a string
+fn main() {
+    let a = String::from("a"); theft(a); // assert!(a == "a"); // Error!
+    let b = String::from("b"); let (b, _) = akward(b); assert!(b == "b"); // Okay
+    let c = String::from("c"); let n = best(&c); assert!(c.len() == n); // Yay!
+}
+
+fn theft(a : String) -> usize { a.len() }
+fn akward(b : String) -> (String, usize) { let n = b.len(); (b, n) }
+fn best(c : &String) -> usize {c.len()}
+#+end_src
+
+Taking ownership and then returning ownership with every function is a bit
+tedious. What if we want to let a function use a value but not take ownership?
+It’s quite annoying that anything we pass in also needs to be passed back if we
+want to use it again, in addition to any data resulting from the body of the
+function that we might want to return as well. Enter *references*: Method ~count~
+wants to refer to a ~String~ /without/ taking ownership, and so the method call
+expects a reference, which are constructed with ~&~.
+
+Notice that in the body of ~best~, we use the argument as if it were a normal
+~String~.
+
+We call having references as function parameters *borrowing*. As in real life, if
+a person owns something, you can borrow it from them. When you’re done, you have
+to give it back.
+
+Just as variables are immutable by default, so are references. We’re not allowed to modify something we have a reference to.
+
+#+begin_src rust
+fn main() {
+    let a = String::from("a"); let b = &a; let _c = &a; assert!(b == "a"); // OK
+    // Mutable variables cannot be borrowed more than once
+    // let mut x = String::from("a"); let y = &mut x; let z = &mut x; assert!(y == z); // Crash!
+
+    println!("{:?}", b);
+}
+
+#+end_src
+
+Mutable references can only be made from mutable variables.
+
+
+--------------------------------------------------------------------------------
+
+As always, we can use curly brackets to create a new scope, allowing for multiple mutable references, just not simultaneous ones:
+
+
+#+begin_src rust
+    let mut s = String::from("hello");
+
+    {
+        let r1 = &mut s;
+    } // r1 goes out of scope here, so we can make a new reference with no problems.
+
+    let r2 = &mut s;
+#+end_src
+
+--------------------------------------------------------------------------------
+
+We also cannot have a mutable reference while we have an immutable one. Users of
+an immutable reference don’t expect the values to suddenly change out from under
+them! However, multiple immutable references are okay because no one who is just
+reading the data has the ability to affect anyone else’s reading of the data.
+
+#+begin_src rust
+fn main() {
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    let r3 = &mut s; // BIG PROBLEM
+
+    println!("{}, {}, and {}", r1, r2, r3);
+}
+#+end_src
+
+--------------------------------------------------------------------------------
+
+Note that a reference’s scope starts from where it is introduced and continues through the last time that reference is used. For instance, this code will compile because the last usage of the immutable references occurs before the mutable reference is introduced:
+
+#+begin_src rust
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    println!("{} and {}", r1, r2);
+    // r1 and r2 are no longer used after this point
+
+    let r3 = &mut s; // no problem
+    println!("{}", r3);
+#+end_src
+
+    The scopes of the immutable references r1 and r2 end after the println! where
+    they are last used, which is before the mutable reference r3 is
+    created. These scopes don’t overlap, so this code is allowed.
+
+--------------------------------------------------------------------------------
+
+Rust [[https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#dangling-references][prevents dangling pointers]].
+
+--------------------------------------------------------------------------------
+
+The Rules of References
+Let’s recap what we’ve discussed about references:
+
+- At any given time, you can have either one mutable reference or any number of immutable references.
+- References must always be valid.
+
+Next, we’ll look at a different kind of reference: slices.
+
+* TODO COMMENT Enums ---“Scenarios with payloads”
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Enums-Scenarios-with-payloads
+:END:
+
+With src_rust[:exports code]{enum}s we can model a problem in terms of its
+possible allowable scenarios ---e.g., whether a resulting computation is
+src_rust[:exports code]{ok(x)} with a meaningful value ~x~, or if it is
+src_rust[:exports code]{Err} since the computation failed somehow.
+
+* TODO COMMENT Strings
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Strings
+:END:
+
+Akin to ~[τ]~ and ~Vec<τ>~, we have ~str~ and ~String~.
+
++ ~str~ ⇒ String literals, not growable nor alterable.
++ ~String~ ⇒ String objects, that can grow and be altered.
+
+#+begin_src rust
+fn main () {
+
+
+    let mut s = String::from("Hello, Rust!");
+println!("{} and {}", s.capacity(), s.len()); // prints 12
+s.push_str("Here I come!");
+println!("{}", s.len()); // prints 24
+println!("{}",s);
+
+let s = "Hello, Rust!";
+// s.push_str("Here I come!"); // Nope!
+println!("{}", s.len()); // prints 12
+
+
+    let s1 = String::from("hello");
+    let s2 = s1;
+    let s2 = &s1;
+    println!("{:?}, world!", s1);
+}
+#+end_src
+#+RESULTS:
+
+run:rust
+* TODO COMMENT Docstrings
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Docstrings
+:END:
+
+Doc comments which are parsed into HTML library documentation:
+/// Generate library docs for the following item.
+//! Generate library docs for the enclosing item.
+
+- https://doc.rust-lang.org/rust-by-example/meta/doc.html
+
+#+begin_src rust
+/// This says a full name: `first` `last`.
+/// Docstrings start with “///” and appear in your editor's tooltips.
+///
+/// [Emacs] When I start typing and select an option from completion, it becomes
+/// a fillable-snippet, TAB to fill the next argument, and the function's
+/// docstring is displayed in the minibuffer.
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// // some invalid bytes, in a vector
+/// let bytes = vec![0, 159];
+/// println!("{}", bytes);
+/// assert!(true);
+/// ```
+/// NOTE: I don't know how to use Run-doctest yet, need to read the rustic manpage
+fn say_name(first: String) {
+    println!("{}", first)
+}
+#+end_src
+
+* TODO COMMENT Reading from and writing to files
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Reading-from-and-writing-to-files
+:END:
+
+#+begin_src rust
+fn main() {
+    // create the director if needed, ignore errors if already exists
+    std::fs::create_dir("./output").ok();
+
+    // load the file input tsv file
+    let input_data = std::fs::read_to_string("./data.tsv").unwrap();
+    let records : Vec<Vec<&str>> = input_data
+        .lines()
+        .map(|line| {
+            let split_line = line.split('\t').collect::<Vec<_>>();
+
+            // panic if any line has multiple tabs
+            assert_eq!(split_line.len(), 2);
+
+            split_line
+        })
+        .collect();
+
+    // this is used to suffix occurence numbers to the first column to make non-conflicting filenames
+    let mut number_suffixes = std::collections::HashMap::new();
+
+
+    records.iter().for_each(|r| {
+        // println!("HI {:?}", r)
+    });
+
+
+    // iterate over records
+    for record in records {
+        // create or increment the suffix as needed
+        *number_suffixes.entry(record[0]).or_insert(0) += 1;
+
+        // write the file
+        std::fs::write(
+            format!(
+                "./output/{}_{}.json",
+                record[0],
+                number_suffixes.get(record[0]).unwrap()
+            ),
+            record[1],
+        );
+        println!("HI {:?} {}", record[0], number_suffixes.get(record[0]).unwrap())
+    }
+}
+#+end_src
+
+* TODO COMMENT Branching / match
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Branching
+:END:
+
+
+#+begin_src rust
+fn main() {
+    let b = if 0 < 1 { true } else { false };
+    assert!(b == (0 < 1));
+
+    let it = 3;
+    let res = match it {
+        1 => 'a',
+        2 => 'b',
+        3 => 'c',
+        _ => 'd', // default case
+    };
+    assert!(res == 'c')
+}
+#+end_src
+
+** Control flow
+:PROPERTIES:
+:CUSTOM_ID: Control-flow
+:END:
+ + ~if~ can be used without an ~else~ but must uses {braces} for the branches.
+   - The condition /must/ be a ~bool~.
+   - When used as an expression, the bodies must have the same type.
+     - ~let number = if condition { 5 } else { "six" };~ crashes since no type
+       can be assigned to ~number~ /at compile time/.
+   - Avoid nested ~else if~'s by using a ~match~ instead.
+ + Rust has three kinds of loops: ~loop~, ~while~, and ~for~. Let’s try each one.
+ + The ~loop~ keyword tells Rust to execute a block of code over and over again
+   forever or until you explicitly tell it to stop.
+   - You can place the ~break~ keyword within the loop to tell the program when to stop executing the loop.
+   - When ~loop~ is used as an /expression/, say in a ~let~, then ~break~ returns the
+     result of the loop: ~let x = loop { ⋯; break expr; ⋯}~.
+   - ~while cond {⋯} ≈ loop {⋯; if ! cond {break;}}~
+   - Loop through a collection with ~for~.
+ #+begin_src rust
+fn main() {
+    let xs = [10, 20, 30, 40, 50];
+    for i in 0..xs.len()-1 { println!("{}", xs[i]) }
+    // Better:
+    for x in xs.iter() { println!("{}", x) }
+}
+ #+end_src
+
+* TODO COMMENT [String] Slices
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Slices
+:END:
+
+Suppose we're looking for the first “hello” in a string.  If we use an index,
+then we have to keep the string and the index variable in-sync: Whenever the
+string changes, we must change the index variable. This is tedious and error
+prone. A better solution is /immutable string slices/: If we have an immutable
+reference to that part of the string, then by Rust's ownership rules, the string
+cannot be altered there.
+
+A string slice is a reference to part of a String, and it looks like this:
+
+
+#+begin_src rust
+    let s = String::from("hello world");
+
+    let hello = &s[0..5];
+    let world = &s[6..11];
+#+end_src
+
+    This is similar to taking a reference to the whole String but with the extra
+    [0..5] bit. Rather than a reference to the entire String, it’s a reference
+    to a portion of the String.
+
+Slice abbreviations
+| “up to 𝓃”       |   | ~&s[0..𝓃]~       | ≈ | ~&s[..𝓃]~ |
+| “𝓃 onwards”     |   | ~&s[𝓃..s.len()]~ | ≈ | ~&s[𝓃..]~ |
+| “all, as slice” |   | ~&s[0..s.len()]~ | ≈ | ~&s[..]~  |
+
+The type that signifies “string slice” is written as ~&str~.
+
+--------------------------------------------------------------------------------
+
+String Literals Are Slices
+
+Recall that we talked about string literals being stored inside the binary. Now
+that we know about slices, we can properly understand string literals:
+
+#+begin_src rust
+let s = "Hello, world!";
+#+end_src
+
+
+The type of s here is &str: it’s a slice pointing to that specific point of the
+binary. This is also why string literals are immutable; &str is an immutable
+reference.
+
+--------------------------------------------------------------------------------
+
+When defining “string functions”, it's best to take ~&str~ as parameters since
+then such functions will work with string literals (elements of type ~&str~) and
+with ~String~ values ~s~ by passing in ~&s[..]~ to convert them to string slices.
+
+String slices, as you might imagine, are specific to strings. But there’s a more
+general slice type, too.  Just as we might want to refer to a part of a string,
+we might want to refer to part of an array. We’d do so like this:
+#+begin_src rust
+#![allow(unused)]
+fn main() {
+let array     : [i32; 5]  = [1, 2, 3, 4, 5];
+let reference : &[i32;5]  = &array;
+let slice     : &[i32]    = &array[1..3];
+
+let a : &[i32; 5] = &[1, 2, 3, 4 ,5];
+let b: &[&str] = &["one", "two", "three"];
+// Why is the type of “a” not “&[i32]”?
+}
+#+end_src
+
+Slices are a view into a block of memory represented as a pointer and a length.
+
+# ლ(ಠ益ಠ)ლ
+
+#+begin_src rust
+fn main () {
+    // Explicitly mention sizes of slices
+    let a: &[i32; 5]  = &[1, 2, 3, 4, 5];
+    let b: &[&str; 3] = &["one", "two", "three"];
+    println!("{:?} and {:?}", a, b);
+
+    // Or not, that's okay too
+    let x: &[i32] = &[1, 2, 3, 4 ,5];
+    let y: &[&str] = &["one", "two", "three"];
+    println!("{:?} and {:?}", x, y);
+
+    // Mutable slices
+    let m : &mut[i32; 1] = &mut [1];
+     m[0] = 7;
+
+    let it = String::from("it");
+    steal( it );
+    it;
+    }
+#+end_src
+
+** COMMENT Slices
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Slices
+:END:
+
+Slices are the answer to “What is the input type of a function that consumes
+arrays /but/ doesn't know their length?” Slices act like temporary views into an
+array or a vector.
+- String world analogy: str is to String, what [T] is to Vec<T>.)
+- Slices are views into a list of objects, and have type [T], indicating a slice of objects with type T.
+
+# (This is essentially how variable-size arrays are implemented in C.)
+#+begin_src emacs-lisp
+// This function borrows a slice
+fn analyze_slice(slice: &[i32]) {
+    println!("first element of the slice: {}", slice[0]);
+    println!("the slice has {} elements", slice.len());
+}
+
+fn main() {
+    // Fixed-size array (type signature is superfluous)
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
+
+    // Arrays can be automatically borrowed as slices
+    println!("borrow the whole array as a slice");
+    analyze_slice(&xs);
+
+    // Slices can point to a section of an array
+    // They are of the form [starting_index..ending_index]
+    // starting_index is the first position in the slice
+    // ending_index is one more than the last position in the slice
+    println!("borrow a section of the array as a slice");
+    analyze_slice(&ys[1 .. 4]);
+
+    // Out of bound indexing causes compile error
+    println!("{}", xs[5]);
+}
+#+end_src
+
+Slices act like temporary views into an array or a vector. For example if you have an array:
+
+let arr: [i32; 4] = [10, 20, 30, 40];
+You can create a slice containing second and third elements like this:
+
+let s = &arr[1..3];
+The [1..3] syntax creates a range from index 1 (inclusive) to 3 (exclusive). If you omit the first number in the range ([..3]) it defaults to zero and if you omit the last number ([1..]) it defaults to the length of the array. If you print the elements in the [1..3] slice, you get 20 and 30:
+
+//prints 20
+println!("First element in slice: {:}", s[0]);
+//prints 30
+println!("Second element in slice: {:}", s[1]);
+But if you try to access an element outside the range of the slice, it will panic:
+
+//panics: index out of bounds
+println!("Third element in slice: {:}", s[2]);
+But how does the slice know that it has only two elements? That's because a slice is not simply a pointer to the array, it also carries around the number of elements of the slice in an additional length field.
+
+Since slices borrow from the underlying data structure, all the usual borrowing rules apply. For example, this code is rejected by the compiler:
+
+fn main() {
+    let mut v: Vec<i32> = vec![1, 2, 3, 4];
+    let s = &v[..];
+    v.push(5);
+    println!("First element in slice: {:}", s[0]);
+}
+Why? Because when the slice is created, it points to the first element of the vector's backing buffer and as a new element is pushed onto the vector, it allocates a new buffer and the old buffer is deallocated. This leaves the slice pointing to an invalid memory address, which if accessed would have lead to undefined behaviour. Rust has saved you from disaster again.
+
+NOTE
+Since slices can be created from both arrays and vectors, they are a very powerful abstraction. Hence for arguments in functions, the default choice should be to accept a slice instead of an array or a vector. In fact many functions like len, is_empty etc. work on slices instead of on vectors or arrays.
+
+
+TODO: Difference between &[T] and Vec<T>  and: &[char] and &str ?
+
+| Type   | Growable | Owned | Dropped when out of scope? |
+|--------+----------+-------+----------------------------|
+| Vec<T> | ✓        | ✔     | ✔                          |
+| &[T]   | ×        | ×     | ×                          |
+|        |          |       |                            |
+
+* TODO COMMENT for (i, &item) in bytes.iter().enumerate()
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-for-i-item-in-bytes-iter-enumerate
+:END:
+We’ll discuss iterators in more detail in Chapter 13. For now, know that iter is a method that returns each element in a collection and that enumerate wraps the result of iter and returns each element as part of a tuple instead. The first element of the tuple returned from enumerate is the index, and the second element is a reference to the element. This is a bit more convenient than calculating the index ourselves.
+
+Because the enumerate method returns a tuple, we can use patterns to destructure that tuple, just like everywhere else in Rust. So in the for loop, we specify a pattern that has i for the index in the tuple and &item for the single byte in the tuple. Because we get a reference to the element from .iter().enumerate(), we use & in the pattern.
+* TODO COMMENT Testing
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Testing
+:END:
++ ~cargo test~ to run all functions with a #[test] marker above them.
++ Do ~cargo test > test.out~ to get a nice output listing the success/failures.
+
+#+begin_src rust
+#[test]
+fn super_simple_test () {
+   assert!(fib(1) == 1);
+}
+
+#[test]
+fn super_simple_test_two () {
+   assert!(fib(10) == 89);
+}
+
+#[test]
+fn super_simple_test_third () {
+   assert!(fib(8) == 34);
+}
+
+fn fib (n : i64) -> i64 {
+    if n <= 1 { 1 }
+    else { fib(n - 1) + fib (n - 2) }
+}
+
+fn main() {
+    println!("fib ⇒ {}", fib(6));
+
+
+
+
+}
+#+end_src
+
+1, 1, 2, 3, 5, 8, 13, 21
+
+* TODO COMMENT match
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-match
+:END:
+
+A match expression is made up of arms. An arm consists of a pattern and the code that should be run if the value given to the beginning of the match expression fits that arm’s pattern. Rust takes the value given to match and looks through each arm’s pattern in turn. The match construct and patterns are powerful features in Rust that let you express a variety of situations your code might encounter and make sure that you handle them all. These features will be covered in detail in Chapter 6 and Chapter 18, respectively.
+
+* TODO COMMENT On “::”
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-On
+:END:
+
+  The :: syntax in the ::new line indicates that new is an associated function of the String type. An associated function is implemented on a type, in this case String, rather than on a particular instance of a String. Some languages call this a static method.
+
+This new function creates a new, empty string. You’ll find a new function on many types, because it’s a common name for a function that makes a new value of some kind.
+
+To summarize, the let mut guess = String::new(); line has created a mutable variable that is currently bound to a new, empty instance of a String. Whew!
+
+MA: I.e., new is a factory method.
+
+* TODO COMMENT ref: On “&”
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-ref-On
+:END:
+
+  The & indicates that this argument is a reference, which gives you a way to let multiple parts of your code access one piece of data without needing to copy that data into memory multiple times. References are a complex feature, and one of Rust’s major advantages is how safe and easy it is to use references. You don’t need to know a lot of those details to finish this program. For now, all you need to know is that like variables, references are immutable by default. Hence, you need to write &mut guess rather than &guess to make it mutable. (Chapter 4 will explain references more thoroughly.)
+* TODO COMMENT Traits
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Traits
+:END:
+
+
+
+  An impl block is always for a type, so, inside that block, Self means that type:
+
+Some traits are so common, they can be implemented automatically by using the derive attribute:
+
+* TODO [#A] COMMENT Reads
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-Reads
+:END:
+
+TODO:HERE
+https://doc.rust-lang.org/rust-by-example/custom_types/structs.html
+
++ [X] [[https://doc.rust-lang.org/rust-by-example/hello.html][Rust By Example]]; online runnable snippets
++ [ ] [[https://stevedonovan.github.io/rust-gentle-intro/print.html][A Gentle Introduction to Rust]]
++ [ ] [[https://hashrust.com/blog/][HashRust Blog]]
+
+--------------------------------------------------------------------------------
+
+Looks super neato! https://tourofrust.com/00_en.html
+
+Seems good: https://github.com/Dhghomon/easy_rust/blob/master/README.md#mutability-changing
+
+https://exercism.io/tracks/rust
+
+https://github.com/rust-lang/rustlings
+
+https://gitconnected.com/learn/rust
+
+https://towardsdatascience.com/you-want-to-learn-rust-but-you-dont-know-where-to-start-fc826402d5ba
+
+https://hackr.io/tutorials/learn-rust
+
+Follow Olivia Ifrim's Sokobon Tutorial 22 where you implement a simple windowed
+2D sokobon game in Rust. This tutorial also doesn't assume you know any Rust so
+it's also very approachable for absolute beginners.  https://sokoban.iolivia.me/
+
+Follow Philipp Flenker's Hecto Tutorial 22 where you implement a simple vim-like
+terminal text editor in Rust. The tutorial doesn't assume you know any Rust so
+it's very approachable even for absolute beginners.
+https://www.philippflenker.com/hecto/
+
+One great general beginner resource I couldn't fit above but still recommend to
+read and reference is David MacLeod's Easy Rust 25.
+https://github.com/Dhghomon/easy_rust/blob/master/README.md
+
++ [ ] [[https://www.rust-lang.org/learn][Learn Rust - Rust Programming Language]]
+
++ [ ] [[https://rust-unofficial.github.io/too-many-lists/][Introduction - Learning Rust With Entirely Too Many Linked Lists]]
+
++ [ ] [[https://fasterthanli.me/articles/a-half-hour-to-learn-rust][A half-hour to learn Rust - fasterthanli.me]] [Would not suggest this as an
+  intro tutorial to anyone!]
+  ⌘+f is also a macro. It violently stops execution
+
+
+Some great resources for advanced beginners on specific aspects of Rust where people commonly struggle with are:
++ Clear Explanation of Rust's Module System 16 by Sheshbabu Chinnakonda
+  http://www.sheshbabu.com/posts/rust-module-system/
++ Common Rust Lifetime Misconceptions 2
+  https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md
++ Sizedness in Rust 9
+  https://github.com/pretzelhammer/rust-blog/blob/master/posts/sizedness-in-rust.md
+
+** COMMENT super neat stuff
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-super-neat-stuff
+:END:
+
+/consider/ adding snippets to
+https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=98f4284c0826e7977fc8b2d75b9c3cc6
+;-)
+
+** COMMENT What if I want ~N~ columns? Or non-landscape? Or multiple formats?
+  :PROPERTIES:
+  :CUSTOM_ID: COMMENT-What-if-I-want-N-columns-Or-non-landscape-Or-multiple-formats
+  :END:
+
+Press ~C-c C-c~ on the following incantation to produce a single column portrait of the cheat sheet.
+#+name: make-portrait
+#+BEGIN_SRC emacs-lisp :results none
+(with-temp-buffer
+    (insert
+    "#+EXPORT_FILE_NAME: CheatSheet_Portrait.pdf
+     ,#+LATEX_HEADER_EXTRA: \\landscapefalse \\def\\cheatsheetcols{1}
+     ,#+INCLUDE: CheatSheet.org
+    ")
+
+    (let ((org-export-use-babel nil))
+      (org-mode)
+      (org-latex-export-to-pdf)
+      )
+)
+#+END_SRC
+** COMMENT Making ~README.org~
+  :PROPERTIES:
+  :CUSTOM_ID: COMMENT-Making-README-org
+  :END:
+
+  Evaluate the following source block with ~C-c C-c~
+  to produce a ~README~ file.
+
+  # :'( For some reason using {{{title}}} below would not work.
+
+#+NAME: make-readme
+#+BEGIN_SRC emacs-lisp
+(with-temp-buffer
+    (insert
+    "#+EXPORT_FILE_NAME: README.md
+     ,#+HTML: <h1> AngularJSCheatSheet </h1>
+     ,#+OPTIONS: toc:nil d:nil
+     # Toc is displayed below at a strategic position.
+
+     {{{blurb}}}
+
+    ,*The listing sheet, as PDF, can be found
+     [[file:CheatSheet.pdf][here]]*;
+     while below is an unruly html rendition
+     ---there is also a
+     badge:beautiful|HTML_webpage|success|https://alhassy.github.io/RustCheatSheet|javascript (•̀ᴗ•́)و
+
+     # Markdown links: [title](target)
+
+     This reference sheet is built from a
+     [[https://github.com/alhassy/CheatSheet][CheatSheets with Org-mode]]
+     system.
+
+     ,#+TOC: headlines 2
+     ,#+INCLUDE: CheatSheet.org
+    ")
+
+    ;; No code execution on export
+    ;; ⟪ For a particular block, we use “:eval never-export” ⟫
+    ;;
+    (let ((org-export-use-babel nil))
+      (org-mode)
+      (org-md-export-to-markdown)
+      )
+)
+#+END_SRC
+
+#+RESULTS: make-readme
+: README.md
+
+Note that the ~blurb~ macro is defined by the user, to provide a terse description of the project.
+   - Think the one-line statement at the top of a github repo page.
+
+#    The ~d:nil~ ensures the ‘drawer’ ~:Hide: ⋯ :End:~ is not exported; it's there for me
+#    as a reminder.
+** COMMENT You can even compile Rust into WebAssembly in order to run it in-browser!
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-You-can-even-compile-Rust-into-WebAssembly-in-order-to-run-it-in-browser
+:END:
