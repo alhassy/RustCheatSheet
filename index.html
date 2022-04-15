@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-07 Thu 09:26 -->
+<!-- 2022-04-15 Fri 13:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rust CheatSheet</title>
@@ -226,13 +226,16 @@
 <ul>
 <li><a href="#hello-world">1. <a href="#hello-world">Hello World!</a></a>
 <ul>
-<li><a href="#cargo-new">1.1. <a href="#cargo-new">  <code>cargo new</code></a></a></li>
+<li><a href="#cargo-new">1.1. <code>cargo new</code></a></li>
 <li><a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">1.2. <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></a></li>
 </ul>
 </li>
-<li><a href="#the-notation-types-as-namespaces-and-general-imports">2. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
-<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">3. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
-<li><a href="#types">4. <a href="#types">Types</a></a></li>
+<li><a href="#COMMENT-Formatted-text-print">2. <a href="#COMMENT-Formatted-text-print">Formatted text:  <code class="src src-rust">format!, println!, dbg!</code></a></a></li>
+<li><a href="#the-notation-types-as-namespaces-and-general-imports">3. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
+<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">4. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
+<li><a href="#types">5. <a href="#types">Types</a></a></li>
+<li><a href="#COMMENT-Tuples-and-Arrays">6. <a href="#COMMENT-Tuples-and-Arrays">Tuples and Arrays</a></a></li>
+<li><a href="#Slices-and-str">7. <a href="#Slices-and-str">Slices &#x2014;and <code>str</code></a></a></li>
 </ul>
 </div>
 </div>
@@ -242,13 +245,16 @@
 <ul>
 <li><a href="#hello-world">1. <a href="#hello-world">Hello World!</a></a>
 <ul>
-<li><a href="#cargo-new">1.1. <a href="#cargo-new">  <code>cargo new</code></a></a></li>
+<li><a href="#cargo-new">1.1. <code>cargo new</code></a></li>
 <li><a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">1.2. <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></a></li>
 </ul>
 </li>
-<li><a href="#the-notation-types-as-namespaces-and-general-imports">2. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
-<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">3. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
-<li><a href="#types">4. <a href="#types">Types</a></a></li>
+<li><a href="#COMMENT-Formatted-text-print">2. <a href="#COMMENT-Formatted-text-print">Formatted text:  <code class="src src-rust">format!, println!, dbg!</code></a></a></li>
+<li><a href="#the-notation-types-as-namespaces-and-general-imports">3. <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></a></li>
+<li><a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">4. <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></a></li>
+<li><a href="#types">5. <a href="#types">Types</a></a></li>
+<li><a href="#COMMENT-Tuples-and-Arrays">6. <a href="#COMMENT-Tuples-and-Arrays">Tuples and Arrays</a></a></li>
+<li><a href="#Slices-and-str">7. <a href="#Slices-and-str">Slices &#x2014;and <code>str</code></a></a></li>
 </ul>
 </div>
 </div>
@@ -256,14 +262,14 @@
 <div id="outline-container-hello-world" class="outline-2">
 <h2 id="hello-world"><span class="section-number-2">1.</span> <a href="#hello-world">Hello World!</a></h2>
 <div class="outline-text-2" id="text-hello-world">
-<div class="parallel" id="org70985a9">
+<div class="parallel" id="org09d5df6">
 <p>
 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-    <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Hello, world!"</span>);
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Hello, world!"</span>);
 }
 </pre>
 </div>
@@ -271,7 +277,7 @@
 
 <p>
 Compile and run this with <br />
-<code class="src src-emacs-lisp">rustc hello_world.rs<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">; </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">./hello_world</span></code>
+<code class="src src-emacs-lisp">rustc hello_world.rs<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">; </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">./hello_world</span></code>
 </p>
 
 </div>
@@ -284,7 +290,7 @@ every program.  For now, know that names ending in <code class="src src-emacs-li
 </div>
 
 <div id="outline-container-cargo-new" class="outline-3">
-<h3 id="cargo-new"><span class="section-number-3">1.1.</span> <a href="#cargo-new">  <code>cargo new</code></a></h3>
+<h3 id="cargo-new"><span class="section-number-3">1.1.</span> <a href="#orga371ade"><code>cargo new</code></a></h3>
 <div class="outline-text-3" id="text-cargo-new">
 <p>
 Packages of code are referred to as <a href="https://crates.io/"><i>crates</i></a> &#x2014;which are shipped with <i>cargo</i>,
@@ -313,48 +319,48 @@ To install a new crate, simply add it to the end of the <code>[dependencies]</co
 <h3 id="Let's-see-a-full-program-viz-a-Number-Guessing-Game"><span class="section-number-3">1.2.</span> <a href="#Let's-see-a-full-program-viz-a-Number-Guessing-Game">Let's see a full program viz a Number Guessing Game</a></h3>
 <div class="outline-text-3" id="text-Let's-see-a-full-program-viz-a-Number-Guessing-Game">
 <div class="org-src-container">
-<pre class="src src-rust"><span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::io;   <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Use the standard input-output library</span>
-<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">rand</span>::<span style="color: #FFE261; background-color: #fff8dc;">Rng</span>; <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Use Random Number Generator trait, needs &#8220;rand&#8221; crate</span>
-<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::<span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>; <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Enumeration to denote result of comparisons</span>
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">std</span>::io;   <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Use the standard input-output library</span>
+<span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">rand</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Rng</span>; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Use Random Number Generator trait, needs &#8220;rand&#8221; crate</span>
+<span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">std</span>::<span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">cmp</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Ordering</span>; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Enumeration to denote result of comparisons</span>
 
-<span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-    <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Guess the number!"</span>);
-    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Ranges &#8220;m..n&#8221; are all integers i with m &#8804; i &lt; n.</span>
-    <span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">secret_number</span> = <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">rand</span>::thread_rng().gen_range(1..101);
+<span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Guess the number!"</span>);
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Ranges &#8220;m..n&#8221; are all integers i with m &#8804; i &lt; n.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">secret_number</span> = <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">rand</span>::thread_rng().gen_range(1..101);
 
-    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">The &#8220;loop&#8221; keyword creates an infinite loop.</span>
-    <span style="color: #000000;">loop</span> {
-        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Please input your guess."</span>);
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">The &#8220;loop&#8221; keyword creates an infinite loop.</span>
+    <span style="color: #F99416; font-weight: bold;">loop</span> {
+        <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Please input your guess."</span>);
 
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">&#8220;mut&#8221;able variable, bound to an empty String object</span>
-        <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">guess</span> = <span style="color: #FFE261; background-color: #fff8dc;">String</span>::new();
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8220;mut&#8221;able variable, bound to an empty String object</span>
+        <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">guess</span> = <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::new();
 
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Get a handle to the standard input for your terminal.</span>
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Then, stick user input into (a mutable reference to) &#8220;guess&#8221;.</span>
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">If something goes wrong, show an informative message.</span>
-        <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">io</span>::stdin()
-            .read_line(<span style="color: #000000; background-color: #ffffff;">&amp;</span><span style="color: #000000;">mut</span> guess)
-            .expect(<span style="color: #000000; background-color: #f2f2f2;">"Failed to read line"</span>);
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Get a handle to the standard input for your terminal.</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Then, stick user input into (a mutable reference to) &#8220;guess&#8221;.</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">If something goes wrong, show an informative message.</span>
+        <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">io</span>::stdin()
+            .read_line(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #F99416; font-weight: bold;">mut</span> guess)
+            .expect(<span style="color: #739f2f; background-color: #f2f2f2;">"Failed to read line"</span>);
 
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Instead of &#8220;expect&#8221;, we can use &#8220;match&#8221; to move from</span>
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">crashing on an error to instead handling the error...</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Instead of &#8220;expect&#8221;, we can use &#8220;match&#8221; to move from</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">crashing on an error to instead handling the error...</span>
 
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">/* </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Shadow the &#8220;guess&#8221; variable to avoid using a new variable name.</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">/* </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Shadow the &#8220;guess&#8221; variable to avoid using a new variable name.</span>
 
-<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           Handle the possibility of parse errors using Pattern Matching:</span>
-<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           We try to make an unsigned integer out of the user's string input;</span>
-<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">           if no number is parsed, we ask the user to guess again. */</span>
-        <span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">guess</span>: <span style="color: #FFE261; background-color: #fff8dc;">u32</span> = <span style="color: #000000;">match</span> guess.trim().parse() {
-            <span style="color: #FFE261; background-color: #fff8dc;">Ok</span>(num) =&gt; num,
-            <span style="color: #FFE261; background-color: #fff8dc;">Err</span>(_)  =&gt; <span style="color: #000000;">continue</span> <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Restarts the loop</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">           Handle the possibility of parse errors using Pattern Matching:</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">           We try to make an unsigned integer out of the user's string input;</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">           if no number is parsed, we ask the user to guess again. */</span>
+        <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">guess</span>: <span style="color: #36a1bb; background-color: #fff8dc;">u32</span> = <span style="color: #F99416; font-weight: bold;">match</span> guess.trim().parse() {
+            <span style="color: #36a1bb; background-color: #fff8dc;">Ok</span>(num) =&gt; num,
+            <span style="color: #36a1bb; background-color: #fff8dc;">Err</span>(_)  =&gt; <span style="color: #F99416; font-weight: bold;">continue</span> <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Restarts the loop</span>
         };
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Alternatively: guess.trim().parse().unwrap() tries to get &#8220;num&#8221;; otherwise it crashes.</span>
-        <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">&#8220;unwrap&#8221; and &#8220;expect&#8221; are useful for quick development, but otherwise dangerous to use.</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Alternatively: guess.trim().parse().unwrap() tries to get &#8220;num&#8221;; otherwise it crashes.</span>
+        <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8220;unwrap&#8221; and &#8220;expect&#8221; are useful for quick development, but otherwise dangerous to use.</span>
 
-        <span style="color: #000000;">match</span> guess.cmp(<span style="color: #000000; background-color: #ffffff;">&amp;</span>secret_number) {
-            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Less</span>    =&gt; <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Too small!"</span>),
-            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Greater</span> =&gt; <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"Too big!"</span>),
-            <span style="color: #FFE261; background-color: #fff8dc;">Ordering</span>::<span style="color: #FFE261; background-color: #fff8dc;">Equal</span>   =&gt; { <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"You win!"</span>); <span style="color: #000000;">break</span> }, <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Exit the loop</span>
+        <span style="color: #F99416; font-weight: bold;">match</span> guess.cmp(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>secret_number) {
+            <span style="color: #36a1bb; background-color: #fff8dc;">Ordering</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Less</span>    =&gt; <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Too small!"</span>),
+            <span style="color: #36a1bb; background-color: #fff8dc;">Ordering</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Greater</span> =&gt; <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Too big!"</span>),
+            <span style="color: #36a1bb; background-color: #fff8dc;">Ordering</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Equal</span>   =&gt; { <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"You win!"</span>); <span style="color: #F99416; font-weight: bold;">break</span> }, <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Exit the loop</span>
         }
     }
 }
@@ -362,10 +368,32 @@ To install a new crate, simply add it to the end of the <code>[dependencies]</co
 </div>
 
 <p>
-<i>Exercise!</i> Instead of the <code class="src src-rust"><span style="color: #000000;">continue</span></code> on parse errors,
-<code class="src src-rust"><span style="color: #000000;">use</span> <span style="color: #000000; font-weight: bold;">std</span>:process</code> library to quit the program with
-<code class="src src-rust"><span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">process</span>::exit(1)</code> after providing a useful message to
+<b>Shadowing</b> (overriding) let's us <i>reuse</i> names: Mutable variables can change their
+value <i>only</i>, whereas shadowing means we can change the value <i>and</i> the type.
+Shadowing is done with <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">let</span></code>, whereas mutable variables can be assigned to
+directly.
+</p>
+<ul class="org-ul">
+<li>With shadowing, <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">x</span> = f(x)</code>, we can perform a few transformations on a
+value but have the variable be immutable after those transformations have been
+completed.</li>
+</ul>
+<p>
+The <code class="src src-rust">parse</code> function returns a value of type <code>Option</code>, which might contain
+something or it might not contain anything. (Akin to type-safe nullables).
+</p>
+
+<p>
+<i>Exercise!</i> Instead of the <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">continue</span></code> on parse errors, <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #863fc4; font-weight: bold;">std</span>:process</code> library
+to quit the program with <code class="src src-rust"><span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">process</span>::exit(1)</code> after providing a useful message to
 the user.
+</p>
+
+<p>
+<i>Exercise!</i> Instead of the <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">continue</span></code> on parse errors, quit the program with
+<code>panic!("Not a number")</code> &#x2014;this violently stops execution with an error message,
+source file name, and line number. (Likewise, <code>unwrap</code> panics where there is no
+<code>Option</code> value to retrieve.)
 </p>
 
 <p>
@@ -374,37 +402,99 @@ inferred.  If we remove the explicit <i>numeric</i> type annotation from the sec
 <code class="src src-emacs-lisp">guess</code> then <code class="src src-emacs-lisp">parse</code> wouldn't know what kind
 of value is being parsed and we get a compile error. Remove the explicit type
 annotation by specialising <code class="src src-emacs-lisp">parse</code> to get <i>numeric</i> <code>u32</code> values using the
-so-called “turbofixh syntax”: <code class="src src-rust"> parse::&lt;<span style="color: #FFE261; background-color: #fff8dc;">u32</span>&gt;() </code>.
+so-called “turbofixh syntax”: <code class="src src-rust"> parse::&lt;<span style="color: #36a1bb; background-color: #fff8dc;">u32</span>&gt;() </code>.
 </p>
 </div>
+</div>
+</div>
+
+<div id="outline-container-COMMENT-Formatted-text-print" class="outline-2">
+<h2 id="COMMENT-Formatted-text-print"><span class="section-number-2">2.</span> <a href="#COMMENT-Formatted-text-print">Formatted text:  <code class="src src-rust">format!, println!, dbg!</code></a></h2>
+<div class="outline-text-2" id="text-COMMENT-Formatted-text-print">
+<p>
+We can write formatted text to a <code class="src src-rust"><span style="color: #36a1bb; background-color: #fff8dc;">String</span></code> object using
+<code class="src src-rust">format!</code> &#x2014;or print it to the console instead using
+<code class="src src-rust">println!</code>; both work the same and stringify their arguments.
+</p>
+
+<p>
+Let's print <i>4 weeks and 31 days</i> a few different ways:
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Placeholders `{}` will be replaced with arguments.</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;"> weeks and </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;"> days"</span>, 4, 31);
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Or using &#8220;format!&#8221; first.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">it</span> = <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">format!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;"> weeks and </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;"> days"</span>, 4, 31);
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, it);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Positional placeholders can be used.</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{1}</span><span style="color: #739f2f; background-color: #f2f2f2;"> weeks and </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{0}</span><span style="color: #739f2f; background-color: #f2f2f2;"> days"</span>, 31, 4);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">As can named arguments.</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{all}</span><span style="color: #739f2f; background-color: #f2f2f2;"> weeks and </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{every}</span><span style="color: #739f2f; background-color: #f2f2f2;"> days"</span>, every = 31, all = 4);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">We can mix and match.</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{:?}</span><span style="color: #739f2f; background-color: #f2f2f2;"> weeks </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{1:?}</span><span style="color: #739f2f; background-color: #f2f2f2;"> </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{all}</span><span style="color: #739f2f; background-color: #f2f2f2;"> days"</span>, 4, <span style="color: #739f2f; background-color: #f2f2f2;">"and"</span>, all = 31);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">We can also &#8220;pretty print&#8221; expressions; useful for lots of data</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{:#?}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, [<span style="color: #739f2f; background-color: #f2f2f2;">"4"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"weeks"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"and"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"31"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"days"</span>]);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">We can see an expression, its value, and its location in code.</span>
+    <span style="color: #000000;">dbg!</span>(it); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Prints: [src/main.rs:19] it = "4 weeks and 31 days"</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">n</span> = <span style="color: #000000;">dbg!</span>(1 * 2 + 3) - 1; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Prints: [src/main.rs:20] 1 * 2 + 3 = 5</span>
+    <span style="color: #000000;">assert!</span>(n == 4);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Sometimes it may be useful to see the memory address of a variable.</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{:p}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>n);
+}
+</pre>
+</div>
+
+<p>
+Notice that the <code>{:?}</code> placeholder prints text for debugging purposes; e.g.,
+strings keep their quotes. Alternatively, the <code class="src src-ruby">dbg!</code>
+macro takes ownership of an expression, prints the file and line number of where
+that <code>dbg!</code> call occurs along with the resulting value of that expression, and
+returns ownership of the value &#x2014;this means that <i>almost anywhere</i> there is an
+expression 𝒳, we can just replace it with <code>dbg!(𝒳)</code> to get some useful debugging
+information about it!
+<i>The <code>dbg!</code> macro can be really helpful when you’re trying to figure out what your code is doing!</i>
+</p>
+<ul class="org-ul">
+<li>If you're doing lots of <code>println!</code> just to see values of variables/expressions,
+just use <code>dbg!</code> instead: <code>println!("x = {}, y = {}", x, y)</code> can be replaced by
+<code>dbg!(x, y)</code>.</li>
+</ul>
 </div>
 </div>
 
 <div id="outline-container-the-notation-types-as-namespaces-and-general-imports" class="outline-2">
-<h2 id="the-notation-types-as-namespaces-and-general-imports"><span class="section-number-2">2.</span> <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></h2>
+<h2 id="the-notation-types-as-namespaces-and-general-imports"><span class="section-number-2">3.</span> <a href="#the-notation-types-as-namespaces-and-general-imports">The “::” Notation: Types as Namespaces and General Imports</a></h2>
 <div class="outline-text-2" id="text-the-notation-types-as-namespaces-and-general-imports">
 <p>
 Dots are generally used to get field from an object such as <code>p.0</code> for pairs; the
-double-colon is used similarly but for namespaces as in <code>library::file::method</code>.
+double-colon is used similarly but for namespaces as in <code>library::file::function</code>.
 </p>
 
+
 <div class="org-src-container">
-<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-    <span style="color: #000000; font-weight: bold;">assert!</span>(<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::min(3, 8) == 3);
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #000000;">assert!</span>(<span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">std</span>::<span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">cmp</span>::min(3, 8) == 3);
 }
 </pre>
 </div>
 
 <ul class="org-ul">
 <li><p>
-<code class="src src-rust"><span style="color: #000000;">use</span></code> directives can be used to “bring into scope” names from other namespaces.
+<code class="src src-rust"><span style="color: #F99416; font-weight: bold;">use</span></code> directives can be used to “bring into scope” names from other namespaces.
 </p>
 <div class="org-src-container">
-<pre class="src src-rust"><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">use std::cmp::min;        // Single import</span>
-<span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">use std::cmp::{max, min}; // Multiple imports</span>
-<span style="color: #000000;">use</span> <span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">std</span>::<span style="color: #B381C5; background-color: #fff8dc; font-style: italic;">cmp</span>::*;             <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Imports everything</span>
-<span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-    <span style="color: #000000; font-weight: bold;">assert!</span>(min(5, 5) == max(5, 5));
+<pre class="src src-rust"><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">use std::cmp::min;        // Single import</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">use std::cmp::{max, min}; // Multiple imports</span>
+<span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">std</span>::<span style="color: #36a1bb; background-color: #fff8dc; font-weight: bold; font-style: italic;">cmp</span>::*;             <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Imports everything</span>
+<span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #000000;">assert!</span>(min(5, 5) == max(5, 5));
 }
 </pre>
 </div></li>
@@ -413,8 +503,8 @@ double-colon is used similarly but for namespaces as in <code>library::file::met
 Types are namespaces too, and methods can be called as regular functions:
 </p>
 <div class="org-src-container">
-<pre class="src src-rust"><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-    <span style="color: #000000; font-weight: bold;">assert!</span>(<span style="color: #000000; background-color: #f2f2f2;">"hola"</span>.len() == <span style="color: #FFE261; background-color: #fff8dc;">str</span>::len(<span style="color: #000000; background-color: #f2f2f2;">"hola"</span>));
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #000000;">assert!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"hola"</span>.len() == <span style="color: #36a1bb; background-color: #fff8dc;">str</span>::len(<span style="color: #739f2f; background-color: #f2f2f2;">"hola"</span>));
 }
 </pre>
 </div>
@@ -425,28 +515,29 @@ In-general, <code>object.method(args) ≡ type::method(object, args)</code>.
 </div>
 </div>
 <div id="outline-container-a-first-look-at-ownership-why-let-x-f-x-f-x-crashes" class="outline-2">
-<h2 id="a-first-look-at-ownership-why-let-x-f-x-f-x-crashes"><span class="section-number-2">3.</span> <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></h2>
+<h2 id="a-first-look-at-ownership-why-let-x-f-x-f-x-crashes"><span class="section-number-2">4.</span> <a href="#a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">A First look at Ownership: Why <code>let x = ⋯; f(x); f(x)</code> crashes</a></h2>
 <div class="outline-text-2" id="text-a-first-look-at-ownership-why-let-x-f-x-f-x-crashes">
 <p>
-Rust comes with a feature called <i>ownership</i>, which aims to prevent us from
-writing memory unsafe code.
+Many languages distinguish between ‘literals’ and ‘objects’, Rust does so with a
+feature called <i>ownership</i>, which aims to prevent us from writing memory unsafe
+code.
 </p>
 
 <p>
 The following program looks like it should work without any problems&#x2026;
 </p>
 <div class="org-src-container">
-<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-<span id="coderef-hi-def" class="coderef-off"><span class="linenr"> 2: </span>    <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">hi</span> = <span style="color: #000000; background-color: #f2f2f2;">"hello"</span>.to_string(); <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">We want an object; not a literal primitive.</span></span>
+<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+<span id="coderef-hi-def" class="coderef-off"><span class="linenr"> 2: </span>    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">hi</span> = <span style="color: #739f2f; background-color: #f2f2f2;">"hello"</span>.to_string(); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">We want an object; not a literal primitive.</span></span>
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>    <span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">speak</span>(<span style="color: #000000; font-weight: bold;">words</span>: <span style="color: #FFE261; background-color: #fff8dc;">String</span>) {
-<span class="linenr"> 5: </span>        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"</span><span style="color: #000000; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #000000; background-color: #f2f2f2;">"</span>, words)
+<span class="linenr"> 4: </span>    <span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">speak</span>(<span style="color: #863fc4; font-weight: bold;">words</span>: <span style="color: #36a1bb; background-color: #fff8dc;">String</span>) {
+<span class="linenr"> 5: </span>        <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, words)
 <span class="linenr"> 6: </span>    }
 <span class="linenr"> 7: </span>
 <span id="coderef-first-call" class="coderef-off"><span class="linenr"> 8: </span>    speak(hi);</span>
-<span id="coderef-second-call" class="coderef-off"><span class="linenr"> 9: </span>    <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">speak(hi); // Whoops, the *value* of &#8220;me&#8221; has moved out of this *variable*!</span></span>
+<span id="coderef-second-call" class="coderef-off"><span class="linenr"> 9: </span>    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">speak(hi); // Whoops, the *value* of &#8220;me&#8221; has moved out of this *variable*!</span></span>
 <span class="linenr">10: </span>
-<span id="coderef-all-good" class="coderef-off"><span class="linenr">11: </span>    hi = <span style="color: #000000; background-color: #f2f2f2;">"yup"</span>.to_string();</span>
+<span id="coderef-all-good" class="coderef-off"><span class="linenr">11: </span>    hi = <span style="color: #739f2f; background-color: #f2f2f2;">"yup"</span>.to_string();</span>
 <span class="linenr">12: </span>    speak(hi)
 <span class="linenr">13: </span>}
 </pre>
@@ -472,15 +563,15 @@ have to pass it by <i>reference</i> instead of by value.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">main</span>() {
-<span class="linenr"> 2: </span>    <span style="color: #000000;">let</span> <span style="color: #000000;">mut</span> <span style="color: #000000; font-weight: bold;">hi</span> = <span style="color: #000000; background-color: #f2f2f2;">"hello"</span>.to_string();
+<pre class="src src-rust"><span class="linenr"> 1: </span><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+<span class="linenr"> 2: </span>    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">hi</span> = <span style="color: #739f2f; background-color: #f2f2f2;">"hello"</span>.to_string();
 <span class="linenr"> 3: </span>
-<span id="coderef-borrow" class="coderef-off"><span class="linenr"> 4: </span>    <span style="color: #000000;">fn</span> <span style="color: #000000; font-weight: bold;">speak</span>(<span style="color: #000000; font-weight: bold;">words</span>: <span style="color: #000000; background-color: #ffffff;">&amp;</span><span style="color: #FFE261; background-color: #fff8dc;">String</span>) {</span>
-<span class="linenr"> 5: </span>        <span style="color: #EB64B9; background-color: #fff8dc; font-style: italic;">println!</span>(<span style="color: #000000; background-color: #f2f2f2;">"</span><span style="color: #000000; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #000000; background-color: #f2f2f2;">"</span>, words)
+<span id="coderef-borrow" class="coderef-off"><span class="linenr"> 4: </span>    <span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">speak</span>(<span style="color: #863fc4; font-weight: bold;">words</span>: <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #36a1bb; background-color: #fff8dc;">String</span>) {</span>
+<span class="linenr"> 5: </span>        <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, words)
 <span class="linenr"> 6: </span>    }
 <span class="linenr"> 7: </span>
-<span id="coderef-use" class="coderef-off"><span class="linenr"> 8: </span>    speak(<span style="color: #000000; background-color: #ffffff;">&amp;</span>hi);  <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Works first time.</span></span>
-<span class="linenr"> 9: </span>    speak(<span style="color: #000000; background-color: #ffffff;">&amp;</span>hi);  <span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #91889B; background-color: #f2f2f2; font-style: italic;">Works second time!</span>
+<span id="coderef-use" class="coderef-off"><span class="linenr"> 8: </span>    speak(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>hi);  <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Works first time.</span></span>
+<span class="linenr"> 9: </span>    speak(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>hi);  <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Works second time!</span>
 <span class="linenr">10: </span>}
 </pre>
 </div>
@@ -500,12 +591,94 @@ They're useful when we don't want to pass “ownership” to control structures
 (such as for-loops) or functions.
 </p></li>
 </ul></li>
+
+<li><p>
+A variable binding can be immutably borrowed multiple times:
+</p>
+<ul class="org-ul">
+<li>🥳 <code>let x = 1; let ref1 = &amp;x; let ref2 = &amp;x</code>.</li>
+</ul></li>
+
+<li><p>
+While borrowed, a variable binding cannot be mutated:
+</p>
+<ul class="org-ul">
+<li>😦 <code>let mut x = 1; let ref = &amp;x; x = 2</code></li>
+</ul></li>
+
+<li><p>
+While immutably borrowed, a variable cannot be mutably borrowed:
+</p>
+<ul class="org-ul">
+<li>😦 <code>let mut x = 1; let ref1 = &amp;x; let ref2 = &amp;mut x</code>.</li>
+</ul></li>
 </ul>
+
+<hr />
+
+<p>
+<b>Summary:</b> Rust provides two variants of most types, those that can be <i>owned</i> and
+those that cannot. Unowned types are passed-by-value, or copied.  Loosely put,
+this is the difference between <i>literals</i> and <i>objects</i>.
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Literals have no ownership, so the following works fine.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">x</span>: <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #36a1bb; background-color: #fff8dc;">str</span> = <span style="color: #739f2f; background-color: #f2f2f2;">"hello"</span>;
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">y</span> = x;
+    <span style="color: #000000;">dbg!</span>(x, y); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; "hello", "hello"</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Objects have a single owner, so the following crashes.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">x</span> = <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"hello"</span>);
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">y</span> = x; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Now &#8216;y&#8217; owns the string</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">dbg!(x, y); // Cannot use &#8216;x&#8217; since it owns nothing!</span>
+}
+</pre>
+</div>
+
+<p>
+<b>This is important:</b> <i>When we say <code>let mut x = thing; let mut y = x</code>, are updates to
+<code>y</code> reflected in <code>x</code> or not?</i> Yes, if <code>thing</code> is a literal; otherwise it doesn't matter
+in Rust since <code>x</code> can no-longer be used &#x2014;multiple mutable references cause
+trouble!
+</p>
+
+<p>
+<i>Exercise!</i> Confirm that references cannot be owned, by making a similar <code>x, y</code>
+setup as above.
+</p>
+<p>
+(For the curious, <code>String</code> <a href="https://github.com/rust-lang/rust/blob/master/library/alloc/src/string.rs#L366-L368">is just</a> a structure consisting of a vector of integers.)
+</p>
+
+<p>
+Incidentally, another difference between literals and objects is their
+<i>lifetimes</i>. (Objects are heap-allocated.)
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">This works since literals are &#8220;static&#8221;; live forever.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">x</span> = { <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">y</span> = &amp;<span style="color: #739f2f; background-color: #f2f2f2;">"hi"</span>; y };
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">let x = { let y = &amp;"hi".to_string(); y };</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Error: The string object does not live long enough to be used anywhere else!</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Note: Consider using a `let` binding to create a longer lived value.</span>
+
+    <span style="color: #000000;">dbg!</span>(x);
+}
+</pre>
+</div>
+
+<p>
+<i>Exercise!</i> By making similar <code>x, y</code> setups as above, confirm that arrays <code>[T; n]</code> are
+unowned and have static lifetimes, whereas vectors <code>Vec&lt;T&gt;</code> are owned and are
+only have dedicated lifetimes.
+</p>
 </div>
 </div>
 
 <div id="outline-container-types" class="outline-2">
-<h2 id="types"><span class="section-number-2">4.</span> <a href="#types">Types</a></h2>
+<h2 id="types"><span class="section-number-2">5.</span> <a href="#types">Types</a></h2>
 <div class="outline-text-2" id="text-types">
 <p>
 Rust is a statically &amp; strongly typed language: It knows the types of all
@@ -643,21 +816,190 @@ integers</i> <code>u𝓃</code> which store numbers from \(0\) to \(2^{n}\).
 </p>
 
 <ul class="org-ul">
-<li>These types provide bounds on numbers; e.g., <code class="src src-rust"><span style="color: #000000;">let</span> <span style="color: #000000; font-weight: bold;">it</span>: <span style="color: #FFE261; background-color: #fff8dc;">u8</span> = 256</code> results in a compile error since 256 is out of range for
-<code class="src src-rust"><span style="color: #FFE261; background-color: #fff8dc;">u8</span></code>.</li>
+<li>These types provide bounds on numbers; e.g., <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">it</span>: <span style="color: #36a1bb; background-color: #fff8dc;">u8</span> = 256</code> results in a compile error since 256 is out of range for
+<code class="src src-rust"><span style="color: #36a1bb; background-color: #fff8dc;">u8</span></code>.</li>
 <li>By default, numeric variables without an explicit type are assigned type
-<code class="src src-rust"><span style="color: #FFE261; background-color: #fff8dc;">i32</span></code>, if possible.</li>
-<li>Numbers have the expected arithmetic operations <code class="src src-emacs-lisp"><span style="color: #000000; font-weight: bold;">+</span>, <span style="color: #000000; font-weight: bold;">-</span>, <span style="color: #000000; font-weight: bold;">/</span>, <span style="color: #000000; font-weight: bold;">%</span></code> (remainder).</li>
+<code class="src src-rust"><span style="color: #36a1bb; background-color: #fff8dc;">i32</span></code>, if possible.</li>
+<li>Numbers have the expected arithmetic operations <code class="src src-emacs-lisp"><span style="color: #36a1bb; font-weight: bold;">+</span>, <span style="color: #36a1bb; font-weight: bold;">-</span>, <span style="color: #36a1bb; font-weight: bold;">/</span>, <span style="color: #36a1bb; font-weight: bold;">%</span></code> (remainder).</li>
 <li>Underscores can be inserted in numeric literals to improve readability,
 e.g. <code>1_000</code> is the same as <code>1000</code>, and <code>0.000_001</code> is the same as <code>0.000001</code>.</li>
 </ul></li>
 </ul>
 </div>
 </div>
+
+<div id="outline-container-COMMENT-Tuples-and-Arrays" class="outline-2">
+<h2 id="COMMENT-Tuples-and-Arrays"><span class="section-number-2">6.</span> <a href="#COMMENT-Tuples-and-Arrays">Tuples and Arrays</a></h2>
+<div class="outline-text-2" id="text-COMMENT-Tuples-and-Arrays">
+<p>
+Both tuples and arrays collect multiple values and have fixed (non-growable)
+sizes; the only difference is that the values in a tuple can be of a different
+type whereas an array requires them to all have the same type.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Create: Tuples, different types allowed</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">p</span> = (<span style="color: #739f2f; background-color: #f2f2f2;">'a'</span>, 1, 2.3, <span style="color: #739f2f; background-color: #f2f2f2;">"bye"</span>);
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">q</span>: (<span style="color: #36a1bb; background-color: #fff8dc;">char</span>, <span style="color: #36a1bb; background-color: #fff8dc;">i32</span>) = (<span style="color: #739f2f; background-color: #f2f2f2;">'a'</span>, 12); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Explicit type annotation</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Create: Arrays, can only be same type</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">a</span> = [1, 2, 3];
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">b</span> : [<span style="color: #36a1bb; background-color: #fff8dc;">char</span>; 2] = [<span style="color: #739f2f; background-color: #f2f2f2;">'x'</span>, <span style="color: #739f2f; background-color: #f2f2f2;">'y'</span>]; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Explicit type annotation</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Read: Tuples, with &#8220; .&#119998; &#8221; notation</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Read: Arrays, with &#8220; [&#119998;] &#8221; notation</span>
+    <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{0}</span><span style="color: #739f2f; background-color: #f2f2f2;">, </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{1}</span><span style="color: #739f2f; background-color: #f2f2f2;">, </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{2}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, q.0, p.3, a[1]); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">p.4, a[4] &#8658; Error!</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Both can be *destructured*, but must match in length</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> (_, me, _, you) = p; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8776;  let me = p.1; let you = p.3;</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> [_, them, _]    = a; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8776;  let them = a[1];</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Example: A super simple way to swap</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">x</span> = 1; <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">y</span> = 2;
+    <span style="color: #000000;">assert!</span>(x == 1 &amp;&amp; y == 2);
+    <span style="color: #F99416; font-weight: bold;">let</span> (y, x) = (x, y);       <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Shadowing</span>
+    <span style="color: #000000;">assert!</span>(x == 2 &amp;&amp; y == 1);
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Shorthand for constant arrays</span>
+    <span style="color: #000000;">assert!</span>([2, 2, 2, 2] == [2; 4]);
+}
+</pre>
+</div>
+
+<p>
+<code>[τ; n]</code> is the type of arrays of length \(n\) with elements from type τ.
+</p>
+<p>
+If τ is a value, then there is only one possible array: <code>[τ, τ, ..., τ]</code> (<i>n</i>-many
+times).
+</p>
+
+
+<p>
+We can loop over an array as follows.
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">names</span> = [<span style="color: #739f2f; background-color: #f2f2f2;">"me"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"you"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"them"</span>];
+    <span style="color: #F99416; font-weight: bold;">for</span> <span style="color: #863fc4; font-weight: bold;">name</span> <span style="color: #F99416; font-weight: bold;">in</span> names {
+        <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, name)
+    }
+}
+</pre>
+</div>
+
+<p>
+<i>Exercise!</i> Use a vector, <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">names</span> = <span style="color: #000000;">vec!</span>[<span style="color: #739f2f; background-color: #f2f2f2;">"me"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"you"</span>, <span style="color: #739f2f; background-color: #f2f2f2;">"them"</span>]</code>, and try to (<i>debug</i>-)print <code class="src src-rust">names</code> after the
+loop. Notice that <code class="src src-rust">name</code> lost <i>ownership</i> of its value to
+the <code class="src src-rust">for&#8943;in</code> loop. Fix this by giving the loop a
+reference, <code class="src src-rust"><span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>names</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-Slices-and-str" class="outline-2">
+<h2 id="Slices-and-str"><span class="section-number-2">7.</span> <a href="#Slices-and-str">Slices &#x2014;and <code>str</code></a></h2>
+<div class="outline-text-2" id="text-Slices-and-str">
+<p>
+If we have an array/vector/string/collection, how do we reference a slice of
+their memory; i.e., narrow our view to a sub-part of the entire whole? The
+answer is “slice types”.
+</p>
+
+<p>
+Slices are similar to arrays, but their length is not known at compile
+time. Essentially, slices are “views into segments of data” and <a href="https://stackoverflow.com/a/27150865/17693195">so consists of
+two-parts</a>: a pointer to the start of the data, and the length of the
+data. Below, with a bit of <a href="https://stackoverflow.com/a/24761180/17693195">pointer arithmetic</a>, we can use slices as these
+two-parts &#x2014;but this is not recommended!
+</p>
+
+<ul class="org-ul">
+<li><a href="https://doc.rust-lang.org/reference/types/slice.html">A slice</a>, <code>[τ]</code>, is a view into a block of memory. Whether mutable or not, <i>a
+slice always borrows</i> and that is why it is always behind a <a href="https://doc.rust-lang.org/reference/types/pointer.html">pointer</a>, &amp;.  Thus,
+sometimes people say “slices are &amp;[τ]”.</li>
+<li>Since references are unowned, so too slices <code>&amp;[τ]</code> are unowned.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">array</span>: [<span style="color: #36a1bb; background-color: #fff8dc;">i32</span>; 5] = [11, 22, 33, 44, 55];
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">slice</span>: <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>[<span style="color: #36a1bb; background-color: #fff8dc;">i32</span>] = <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>array;
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Decompose a slice into its two main parts</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">length</span> = slice.len(); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; 3</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">pointer</span> = slice.as_ptr(); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; Some memory address</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">The &#120003;th element is &#120003;-steps away from the starting pointer.</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">(This is why elements start at index 0.)</span>
+    <span style="color: #000000;">dbg!</span>(<span style="color: #000000; font-weight: bold; text-decoration: underline;">unsafe</span> { *pointer.offset(1) }); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; 22</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">If you do a pointer offset out of bounds, like 4, you've just accessed more memory;</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">possibly by accident and not the memory you want!</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Safe way to do indexing; which checks for bounds at run-time.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">element</span> = slice[2]; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; 33</span>
+                            <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">let element = slice[4]; // Index out of bounds error!</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">An even safer way, that does not crash at run-time.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">element</span> = slice.get(4); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; None</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Get a sub-slice start at index 2 up to, and including, index 3.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">sub</span>: <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>[<span style="color: #36a1bb; background-color: #fff8dc;">i32</span>] = <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>slice[2..=3]; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; [33, 44]</span>
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">You can (mutably) borrow a slice of a (mutable) vector, or string, etc.</span>
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">v</span> = <span style="color: #000000;">vec!</span>[1, 2, 3, 4, 5];
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">s</span> = <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #F99416; font-weight: bold;">mut</span> v[2..]; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; [3, 4, 5]</span>
+    s[0] = 333;
+    <span style="color: #000000;">assert!</span>(s == [333, 4, 5]);
+    <span style="color: #000000;">assert!</span>(v == <span style="color: #000000;">vec!</span>[1, 2, 333, 4, 5]);
+}
+</pre>
+</div>
+
+<p>
+We borrow slices of <code>x : τ</code> using <code>&amp;x[..]</code> <i>provided</i> the type τ implements the <code>Index</code>
+and <code>IndexMut</code> traits, which let us using the indexing operator.  The “..”  syntax
+is for range literals: <code>.., 0.., ..20, ..=20, 3..6</code> are all example ranges with
+<code>m..n</code> denoting all integers \(i\) with \(m ≤ i < n\) &#x2014;and the right-bound can be
+made inclusive using ‘=’. More concretely, <code>(..=20).contains(&amp;13)</code> is true since
+the range <code>..=20</code> is all integers at-most 20.
+</p>
+<ul class="org-ul">
+<li>References are implicitly converted into slices, when possible, by treating <code>&amp;x</code>
+as if it were <code>&amp;x[..]</code>.</li>
+</ul>
+
+<p>
+[Mutable Slices] <i>Notice that changing the value of a slice index also changes
+the value in the</i> <i>underlying array/vector/string &#x2014;which actually owns the
+values that the slice is letting us look at.</i>
+</p>
+
+<p>
+Since slices can be formed from vectors and arrays, if we want a function to
+work on both kinds of values, we make our function consume a slice: Values of
+<code>&amp;Vec&lt;T&gt;</code> and <code>&amp;[T; n]</code> are implicitly transformed into values of <code>&amp;[T]</code>.
+</p>
+<ul class="org-ul">
+<li>Likewise, for <code>&amp;str</code> and <code>String</code>, the more generic approach is functions
+consuming <code>&amp;str</code>.</li>
+</ul>
+
+<p>
+Rust's strings are all Unicode and so characters differ in size, as such string
+slices cannot be implemented with a pointer and accessed with a uniform offset,
+like <code>[T]</code>. As such, there is a special type <code>str</code>, “string slices”, which fullfills
+this role. <code>str</code> really acts like slice types; e.g., <code>"hello"</code> has type <code>str</code> and
+<code>&amp;"hello"[1..]</code> has type <code>&amp;str</code>; yet <code>assert!(&amp;"hello"[1..] == "ello")</code> is true.
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: <a href="https://alhassy.github.io/">Musa Al-hassy</a></p>
-<p class="date">Created: 2022-04-07 Thu 09:26</p>
+<p class="date">Created: 2022-04-15 Fri 13:04</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
