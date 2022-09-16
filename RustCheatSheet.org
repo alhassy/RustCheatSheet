@@ -921,14 +921,18 @@ impl NumRef<'_> {
 | [Growable] Strings, ~String~ | Strings that can grow in size; essentially ~Vec<&str>~;; ~let five = "5".to_string()~                             |
 |----------------------------+---------------------------------------------------------------------------------------------------------------|
 
+
 + *Slices* are the answer to “What is the input type of a function that consumes
   arrays /but/ doesn't know their length?” Slices act like temporary views into an
   array or a vector.
 
-+ Rust vectors are [[https://hashrust.com/blog/arrays-vectors-and-slices-in-rust/#:~:text=How%20does%20a,the%20old%20array.][array-lists]]: They're arrays that double in size whenever
-  more space is needed.
++ The conditional ~if a {b} else {c}~ doesn't need parentheses around the
+  condition and takes two /{blocks}/ which must have the same type.
 
 + Range Example: ~(1..5).for_each(|i| println!("{}", i));~
+
++ Rust vectors are [[https://hashrust.com/blog/arrays-vectors-and-slices-in-rust/#:~:text=How%20does%20a,the%20old%20array.][array-lists]]: They're arrays that double in size whenever
+  more space is needed.
 
 # A /scalar/ type represents a single value; e.g., numbers, booleans, and
 # characters. Whereas /compound types/ can group multiple values into one type;
@@ -1302,10 +1306,312 @@ fn main() {
 #+end_src
 :End:
 
-* COMMENT BORROWING = PASSING BY REFERENCE; otherwise ownership
+* [[https://doc.rust-lang.org/book/ch05-02-example-structs.html][Structures]] ---“Tuples with /named and unordered/ components”
 :PROPERTIES:
-:CUSTOM_ID: COMMENT-BORROWING-PASSING-BY-REFERENCE-otherwise-ownership
+:CUSTOM_ID: COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components
 :END:
+
+Structures /provide ways to group several values into a single value./
+/Conceptually, this allows us to put a bunch of related things in a bag and run
+around with the bag, instead of wrapping our arms around all of the individual/
+/things and trying to hold on to them separately./ ---[[https://eloquentjavascript.net/04_data.html#p_78ZfHX5x1B][Eloquent JavaScript]]
+
+A src_rust[:exports code]{struct}ure is also known as a /record, hashmap, association list,
+lightweight-class, JSON object/.  Struct types are /formed/ as name-type pairs, and
+their values are /constructed/ with ‘struct literals’: Name-value pairs preceded
+by the struct name.
+
+# [Note that tuples, arrays, enums, and ranges can all be /thought of/ as
+# specialisations of the idea of structures. That is, structures are powerful
+# enough to implement the previously mentioned compound types.]
+
++ Tuples /quickly/ group related variables together, but structs give us /meaning/
+  by /naming/ the variables ---instead of using numeric indices.
+
+ #+begin_src rust :prologue "fn main() {" :epilogue "}"
+// ⟨0⟩ Forming a new type
+#[derive(Debug)]   // Simple debug printing
+struct Person {
+    name : String,
+    job  : String,
+    age  : u32
+}
+
+// ⟨1⟩ Introducing a value of that type
+let mut job = String::from("farmer");
+let mut jay = Person {
+    name: String::from("jason"),
+    age: 72,
+    job // Shorthand for same name, but *cloned* value:   job: String::form("farmer")
+};
+// Mutability of “job” and “jay” are not related at all.
+job = String::from("labourer");       // Has no effect on “jay”
+assert!(jay.job == "farmer");
+
+// ⟨2⟩ Eliminating a value of that type by destructuring
+// [Ownership moves: If “jay.field” is an object, it has moved to “field”]
+// [Namely, after this line, /read access/ of “jay.name” is invalid.]
+let Person {name, age, ..} = jay; // The “..” are to ignore the rest
+
+// ⟨3⟩ Updating a field [Give “jay.name” a value and so it is valid to read.]
+jay.name = String::from("jasim");
+assert!(jay.name == "jasim" && name == "jason");
+
+// Using the automatic debug printing
+println!("Jay is {:?}", jay); // Pretty print with: {:#?}
+
+// ⟨4⟩ Let's attach a method to our struct instances
+impl Person {
+    fn speak(&self) {
+        println!("{}: I am a {} years old.", self.name, self.age);
+    }
+}
+// Let's use this method.
+jay.speak();
+
+// ⟨1⟩' Creating instances from instances; “prototyping”!
+// [Read: kathy is like jay but has a different name.]
+// [This “struct update syntax” can only happen in the last position.]
+// [In-particular, “Person {..jay}” is a clone of the value “jay”.]
+let kathy = Person {name: String::from("Kalthum"), ..jay};
+// ⟨4⟩′ We can call methods using type-namespace syntax.
+Person::speak(&kathy);
+
+// ⟨1⟩″ We can also make unnamed fields, and use tuple indexing
+// These “tuple structs” are basically named tuples.
+struct Mine(String, u32);
+let mut it = Mine(String::from("hola"), 23);
+it.1 = 12;
+ #+end_src
+
+ #+RESULTS:
+ : Jay is Person { name: "jasim", job: "farmer", age: 72 }
+ : jasim: I am a 72 years old.
+ : Kalthum: I am a 72 years old.
+
+src_rust[:exports code]{// ⟨4⟩}
+The function ~fn greet(p: &Person) { println!("{}: I am a {}.", p.name, p.job) }~
+is very specific: It only works on ~Person~ values. As such, it's helpful to tie
+this behaviour more closely to the ~Person~ struct, which can be done by moving it
+into an “impl”ementation block. All methods in an ~impl~ block must have the first
+argument named ~self~. As such, we could have written ~fn speak(self: &Person) {⋯}~.
+However, within an ~impl~ block, the type ~Self~ is an alias for the type that the
+~impl~ block is for. As such, we could have written ~fn speak(self: &Self) {⋯}~.
+Since the first argument of methods must be /named/ ~self~ and /typed/ ~Self~, we can
+just abbreviate it to ~self: Self~ to ~self~ ---however, in our case we use the
+abbreviation ~&self~ because we want the value to be /borrowed/, not owned.
+
+/Exercise!/ Change ~speak~ above to consume a mutable reference, ~&mut self~, that
+increments the age. Two other non-mutable things will now break in the above
+program; make them mutable. Make ~kathy~ speak twice and ~assert!~ her age has
+changed.
+:Solution:
+#+begin_src rust
+impl Person {
+    fn speak(&mut self) {
+        println!("{}: I am a {} years old.", self.name, self.age);
+        self.age = self.age + 1
+    }
+}
+
+let mut kathy = Person {name: String::from("Kalthum"), ..jay};
+
+Person::speak(&mut kathy);
+Person::speak(&mut kathy);
+#+end_src
+
+:End:
+
+/Exercise!/ Struct methods can have the same name as struct fields ---whereas
+arbitrary functions cannot share the name of variables. Change the method name src_rust[:exports code]{speak} to be src_rust[:exports
+code]{age}.
+
+# Everything within this impl block will be associated with the type.
+
+
+# /Methods/ are different from functions in that they’re defined within the context
+# of a struct (or an enum or a trait object), and their first parameter is always
+# ~self~, which represents the instance of the struct the method is being called on.
+# The /method syntax/ goes after an instance: we add a dot followed by the method name, parentheses, and any arguments.
+
+** Structs can be generic too!
+:PROPERTIES:
+:CUSTOM_ID: Structs-can-be-generic-too
+:END:
+
+#+begin_src rust
+struct Pair<A, B> {
+    first: A,
+    second: B,
+}
+
+fn main() {
+    let p = Pair {
+        first: 3,
+        second: true,
+    }; // : Pair<i32, bool>
+}
+#+end_src
+
+* Enumerations ~ Tagged Payloads
+:PROPERTIES:
+:CUSTOM_ID: Enumerations-Tagged-Payloads
+:END:
+
+The ~enum~ keyword allows the creation of a type which may be one of a few
+different variants.
+
+Let's make an generic enum to indicate where something can be found, amongst two kinds
+of types.
+#+begin_src rust
+// An enum is defined by a collection of structs.
+#[derive(Debug)]
+enum Location<A, B> {
+    // An `enum` variant may either be unit-like,
+    NoWhere,
+    // or tuple structs,
+    Here(A),
+    There(B),
+    // or named structures.
+    Both { first: A, second: B },
+    // Besides being generic, enums can also be recursive (via indirection)
+    // Swap(Box<Location<A, B>>),
+}
+
+// To work on enums, we use the match clause
+fn toInt<A, B>(l: &Location<A, B>) -> i32 {
+    match l {
+        Location::NoWhere => 0,
+        Location::Here(a) => -1,
+        Location::There(b) => 1,
+        Location::Both { first, second } => 2,
+    }
+}
+
+fn main() {
+    let both = Location::Both {
+        first: 3,
+        second: false,
+    };
+
+    // We need to type annotate since “NoWhere” has no payload from which types can be inferred.
+    let nope = Location::NoWhere::<i32, i32>;
+
+    // Use names without qualifiers
+    use crate::Location::*;
+    let no: Location<i32, i32> = NoWhere;
+
+    dbg!(&no, toInt(&no)); // ⇒ &no = NoWhere; toInt(&no) = 0
+}
+#+end_src
+
+#+RESULTS:
+: [src/main.rs:42] &no = N   oWhere
+: [src/main.rs:42] toInt(&no) = 0
+: [src/main.rs:42] n = NoWhere
+
+/Exercise!/ Insert a ~use~ clause within ~toInt~ so that you can use the constructor
+names without qualifying them.
+
+* Type Conversion: ~From~ and ~Into~
+
+Rust addresses conversion between custom types (i.e., struct and enum) by the
+use of traits. The generic conversions will use the From and Into
+traits. However there are more specific ones for the more common cases, in
+particular when converting to and from Strings.
+
+The [[https://doc.rust-lang.org/std/convert/trait.From.html][From]] and [[https://doc.rust-lang.org/std/convert/trait.Into.html][Into]] traits are inherently linked, and this is actually part of its
+implementation. If you are able to convert type A /from/ type B, then you can
+convert type B /into/ type A.
+
+#+begin_src rust
+// Value-to-value conversions, while consuming the input value.
+trait From<T> { fn from(T) -> Self; } // Convert a T into Self
+trait Into<T> { fn into(self) -> T; } // Convert Self into a T
+#+end_src
+
+Implementing ~From~ automatically provides one with an implementation of ~Into~; [[https://doc.rust-lang.org/src/core/convert/mod.rs.html#537-548][the
+blanket implementation of “ ~From<T> for U~ implies ~Into<U> for T~ ” is very simple.]]
+
+Examples,
++ ~String::from("hola")~ is how we form ~String~ objects from ~str~ literals;
+  conversely ~"hola".into() as String~ is a way to convert a ~str~ literal into a
+  ~String~ object.
+  - It depends on what you're trying to /communicate, emphasise,/ to others.
+    E.g., ~"hello".to_string()~ might be most informative, whereas
+    ~"hello".to_owned()~ emphasises ownership.
++ [[https://doc.rust-lang.org/src/core/option.rs.html#1941-1954][Every type can be converted into an ~Option~.]]
+
+
+The From trait allows for a type to define how to create itself from another
+type, hence providing a very simple mechanism for converting between several
+types.
+
+We can do similar for defining a conversion for our own type.
+#+begin_src rust
+fn main() {
+    struct Number { value: i32, }
+
+    impl From<i32> for Number {
+        fn from(item: i32) -> Self {
+            Number { value: item }
+        }
+    }
+
+    // Three equivalent constructions
+    let a = Number { value: 30 };
+    let b = Number::from(30);
+    let c : Number = 30.into();
+}
+#+end_src
+
+The Into trait is simply the reciprocal of the From trait. That is, if you have implemented the From trait for your type, Into will call it when necessary.
+
+Using the Into trait will typically require specification of the type to convert
+into as the compiler is unable to determine this most of the time. However this
+is a small trade-off considering we get the functionality for free.
+- Removing the type annotation for ~c~ will cause ~into~ to be ambiguous.
+
+
+(For conversions that might fail, there are the [[https://doc.rust-lang.org/std/convert/trait.TryFrom.html][TryFrom]] and [[https://doc.rust-lang.org/std/convert/trait.TryInto.html][TryInto]] traits whose
+methods return ~Result~ values.)
+* Iteration: For loops
+
+
++ The ~for-in~ construct can be used to iterate through an [[https://doc.rust-lang.org/core/iter/trait.Iterator.html][Iterator]]. One of the
+  easiest ways to create an iterator is to use the range notation a..b. This
+  yields values from a (inclusive) to b (exclusive) in steps of one.
+  - by default the for loop will apply the ~into_iter~ function to the collection.
+  - ~into_iter~, ~iter~ and ~iter_mut~ all handle the conversion of a collection into an iterator in different ways, by providing different views on the data within.
+  - iter - This borrows each element of the collection through each iteration. Thus leaving the collection untouched and available for reuse after the loop.
+  #+begin_src rust
+
+fn main() {
+
+
+    let mut xs : Vec<i32> = vec![1, 2, 3];
+
+    // We want to use “xs” later on, so using “iter()” to borrow it.
+    for x in xs.iter() { println!("{}", x) } // x : &i32
+
+    // Mutably borrows each element of the collection, allowing for the
+    // collection to be modified in place.
+    for x in xs.iter_mut() { *x *= 5 } // x : &mut i32
+
+    // Consume the collection, so that on each iteration the exact data is provided.
+    // We cannot reuse xs later on, since it has moved into the loop.
+    for x in xs.into_iter() { println!("{}", x) } // x : i32
+
+    // The key differences are the types of “x” in each kind of iteration; which
+    // allow differing possible actions on it.
+}
+  #+end_src
+
+* COMMENT Monadic Semicolon: The “?” operator [Sadly cannot be overloaded]
+
+https://doc.rust-lang.org/reference/expressions/operator-expr.html#the-question-mark-operator
+
+However, there is this crate: https://docs.rs/do-notation/latest/do_notation/
 * TODO [#A] COMMENT Reads --------------------------------------------------------------------------------
 :PROPERTIES:
 :CUSTOM_ID: COMMENT-Reads
@@ -1469,136 +1775,46 @@ Note that the ~blurb~ macro is defined by the user, to provide a terse descripti
 :PROPERTIES:
 :CUSTOM_ID: COMMENT-You-can-even-compile-Rust-into-WebAssembly-in-order-to-run-it-in-browser
 :END:
-* TODO COMMENT [[https://doc.rust-lang.org/book/ch05-02-example-structs.html][Structures]] ---“Tuples with /named and unordered/ components”
+* TODO COMMENT Types
 :PROPERTIES:
-:CUSTOM_ID: COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components
+:CUSTOM_ID: COMMENT-Types
+:END:
+Rust provides several mechanisms to change or define the type of primitive and
+user defined types.
+
+** ~type~ aliases
+:PROPERTIES:
+:CUSTOM_ID: type-aliases
 :END:
 
-Structures /provide ways to group several values into a single value./
-/Conceptually, this allows us to put a bunch of related things in a bag and run
-around with the bag, instead of wrapping our arms around all of the individual/
-/things and trying to hold on to them separately./ ---[[https://eloquentjavascript.net/04_data.html#p_78ZfHX5x1B][Eloquent JavaScript]]
+If you use a type alias, you can refer to each enum variant via its alias. This
+might be useful if the enum's name is too long or too generic, and you want to
+rename it.
 
-A src_rust[:exports code]{struct}ure is also known as a /record, hashmap, association list,
-lightweight-class, JSON object/.  Struct types are /formed/ as name-type pairs, and
-their values are /constructed/ with ‘struct literals’: Name-value pairs preceded
-by the struct name.
+// Creates a type alias
+type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
 
+
+The most common place you'll see this is in impl blocks using the Self alias,
+which is declared implicitly.
+
+
+Aliasing
+
+The type statement can be used to give a new name to an existing type. Types
+must have UpperCamelCase names, or the compiler will raise a warning. The
+exception to this rule are the primitive types: usize, f32, etc.
+
+
+The main use of aliases is to reduce boilerplate; for example the IoResult<T>
+type is an alias for the Result<T, IoError> type.
+* Converting to strings, and parsing strings : [[https://doc.rust-lang.org/rust-by-example/conversion/string.html][rust by example]]
+* COMMENT More on Structures
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-More-on-Structures
+:END:
 TODO: Maybe move tuples to be here? Since they're just anonomous structs?
 https://doc.rust-lang.org/reference/types/struct.html
-
-[Note that tuples, arrays, enums, and ranges can all be /thought of/ as
-specialisations of the idea of structures. That is, structures are powerful
-enough to implement the previously mentioned compound types.]
-
-+ Tuples /quickly/ group related variables together, but structs give us /meaning/
-  by /naming/ the variables ---instead of using numeric indices.
-
- #+begin_src rust :prologue "fn main() {" :epilogue "}"
-// ⟨0⟩ Forming a new type
-#[derive(Debug)]   // Simple debug printing
-struct Person {
-    name : String,
-    job  : String,
-    age  : u32
-}
-
-// ⟨1⟩ Introducing a value of that type
-let mut job = String::from("farmer");
-let mut jay = Person {
-    name: String::from("jason"),
-    age: 72,
-    job // Shorthand for same name, but *cloned* value:   job: String::form("farmer")
-};
-// Mutability of “job” and “jay” are not related at all.
-job = String::from("labourer");       // Has no effect on “jay”
-assert!(jay.job == "farmer");
-
-// ⟨2⟩ Eliminating a value of that type by destructuring
-// [Ownership moves: If “jay.field” is an object, it has moved to “field”]
-// [Namely, after this line, /read access/ of “jay.name” is invalid.]
-let Person {name, age, ..} = jay; // The “..” are to ignore the rest
-
-// ⟨3⟩ Updating a field [Give “jay.name” a value and so it is valid to read.]
-jay.name = String::from("jasim");
-assert!(jay.name == "jasim" && name == "jason");
-
-// Using the automatic debug printing
-println!("Jay is {:?}", jay); // Pretty print with: {:#?}
-
-// ⟨4⟩ Let's attach a method to our struct instances
-impl Person {
-    fn speak(&self) {
-        println!("{}: I am a {} years old.", self.name, self.age);
-    }
-}
-// Let's use this method.
-jay.speak();
-
-// ⟨1⟩' Creating instances from instances; “prototyping”!
-// [Read: kathy is like jay but has a different name.]
-// [This “struct update syntax” can only happen in the last position.]
-// [In-particular, “Person {..jay}” is a clone of the value “jay”.]
-let kathy = Person {name: String::from("Kalthum"), ..jay};
-// ⟨4⟩′ We can call methods using type-namespace syntax.
-Person::speak(&kathy);
-
-// ⟨1⟩″ We can also make unnamed fields, and use tuple indexing
-struct Mine(String, u32);
-let mut it = Mine(String::from("hola"), 23);
-it.1 = 12;
- #+end_src
-
- #+RESULTS:
- : Jay is Person { name: "jasim", job: "farmer", age: 72 }
- : jasim: I am a 72 years old.
- : Kalthum: I am a 72 years old.
-
-src_rust[:exports code]{// ⟨4⟩}
-The function ~fn greet(p: &Person) { println!("{}: I am a {}.", p.name, p.job) }~
-is very specific: It only works on ~Person~ values. As such, it's helpful to tie
-this behaviour more closely to the ~Person~ struct, which can be done by moving it
-into an “impl”ementation block. All methods in an ~impl~ block must have the first
-argument named ~self~. As such, we could have written ~fn speak(self: &Person) {⋯}~.
-However, within an ~impl~ block, the type ~Self~ is an alias for the type that the
-~impl~ block is for. As such, we could have written ~fn speak(self: &Self) {⋯}~.
-Since the first argument of methods must be /named/ ~self~ and /typed/ ~Self~, we can
-just abbreviate it to ~self: Self~ to ~self~ ---however, in our case we use the
-abbreviation ~&self~ because we want the value to be /borrowed/, not owned.
-
-/Exercise!/ Change ~speak~ above to consume a mutable reference, ~&mut self~, that
-increments the age. Two other non-mutable things will now break in the above
-program; make them mutable. Make ~kathy~ speak twice and ~assert!~ her age has
-changed.
-:Solution:
-#+begin_src rust
-impl Person {
-    fn speak(&mut self) {
-        println!("{}: I am a {} years old.", self.name, self.age);
-        self.age = self.age + 1
-    }
-}
-
-let mut kathy = Person {name: String::from("Kalthum"), ..jay};
-
-Person::speak(&mut kathy);
-Person::speak(&mut kathy);
-#+end_src
-
-:End:
-
-/Exercise!/ Struct methods can have the same name as struct fields ---whereas
-arbitrary functions cannot share the name of variables. Change the method name src_rust[:exports code]{speak} to be src_rust[:exports
-code]{age}.
-
-# Everything within this impl block will be associated with the type.
-
-
-# /Methods/ are different from functions in that they’re defined within the context
-# of a struct (or an enum or a trait object), and their first parameter is always
-# ~self~, which represents the instance of the struct the method is being called on.
-# The /method syntax/ goes after an instance: we add a dot followed by the method name, parentheses, and any arguments.
-
 
 -----
 
@@ -1625,35 +1841,7 @@ struct DebugPrintable(i32);
 - https://doc.rust-lang.org/rust-by-example/hello/print/print_debug.html
 - https://doc.rust-lang.org/rust-by-example/hello/print/fmt.html
 
-** Structs can be generic too:
-:PROPERTIES:
-:CUSTOM_ID: Structs-can-be-generic-too
-:END:
-
-#+begin_src rust
-struct Pair<T> {
-    a: T,
-    b: T,
-}
-
-fn print_type_name<T>(_val: &T) {
-    println!("{}", std::any::type_name::<T>());
-}
-
-fn main() {
-    let p1 = Pair { a: 3, b: 9 };
-    let p2 = Pair { a: true, b: false };
-    print_type_name(&p1); // prints "Pair<i32>"
-    print_type_name(&p2); // prints "Pair<bool>"
-}
-#+end_src
-
-#+RESULTS:
-: cargoXvOHKv::Pair<i32>
-: cargoXvOHKv::Pair<bool>
-
-
-** COMMENT Structs
+** Struct basics
 :PROPERTIES:
 :CUSTOM_ID: COMMENT-Structs
 :END:
@@ -1698,7 +1886,10 @@ fn main() {
 
 # + ~if p.x₁ == y₁ && p.x₂ == y₂ && p.x₃ == y₃ ⋯  ≈  if let P {x₁: y₁, x₂: y₂, x₃: y₃, ..} = p ⋯~
 
-You can declare methods on your own types:
+** You can declare methods on your own types:
+:PROPERTIES:
+:CUSTOM_ID: You-can-declare-methods-on-your-own-types
+:END:
 #+begin_src rust
 struct Number { odd: bool,
         value: i32,
@@ -1720,26 +1911,7 @@ fn main() {
 }
 #+end_src
 
-Structs can be generic too:
-#+begin_src rust
-struct Pair<A, B> {
-    first: A,
-    second: B,
-}
-
-fn main() {
-    assert!(
-        (Pair {
-            first: 1,
-            second: 'b'
-        })
-        .first
-            == 1
-    );
-}
-#+end_src
-
-*** COMMENT {:?}
+** COMMENT {:?}
 :PROPERTIES:
 :CUSTOM_ID: COMMENT
 :END:
@@ -1772,6 +1944,29 @@ rect1 is Rectangle {
 
 
 - Rust also provides "pretty printing" with {:#?}.
+* COMMENT BORROWING = PASSING BY REFERENCE; otherwise ownership
+:PROPERTIES:
+:CUSTOM_ID: COMMENT-BORROWING-PASSING-BY-REFERENCE-otherwise-ownership
+:END:
+
+Slices refer to uniformly-distrubuted segments of memory, but unicode strings
+require different sizes and so Rust has the dedicated str type. However, if you
+decide to invoke .chars() on a string literal, you get an iterator to the
+individual unicode lexemes, and if you, say, call to_uppercase() on one of these
+character-like graphemes, you get an ToUppercase struct value which can be used
+to iterate over the bytes that constitute the resulting unicode character.
+
+
+Closures in Rust are not like what we're used to with anonymous functions in
+many other languages. The compiler converts them into a struct so lifetimes and
+data need to be stored in a particular way that is done automatically.
+
+Making ~match~ take a reference requires us to lose performance on cloning the
+data?
+- Memory allocations are computationally expensive. So cloning a complex data
+  structure is always slower than not doing so.
+
+
 * TODO COMMENT Enums ~ Option
 :PROPERTIES:
 :CUSTOM_ID: COMMENT-Enums-Option
@@ -1949,6 +2144,9 @@ fn main() {
 }
 #+end_src
 
+#+RESULTS:
+: 🍉
+
 ** Or you can bubble up the error:
 :PROPERTIES:
 :CUSTOM_ID: Or-you-can-bubble-up-the-error
@@ -1964,6 +2162,9 @@ fn main() -> Result<(), std::str::Utf8Error> {
 }
 #+end_src
 
+#+RESULTS:
+: 🍉
+
 ** Or you can use ~?~ to do it the concise way:
 :PROPERTIES:
 :CUSTOM_ID: Or-you-can-use-to-do-it-the-concise-way
@@ -1972,10 +2173,13 @@ fn main() -> Result<(), std::str::Utf8Error> {
 #+begin_src rust
 fn main() -> Result<(), std::str::Utf8Error> {
     let s = std::str::from_utf8(&[240, 159, 141, 137])?;
-    println!("{}", s);
+    println!("Watermelon = {}", s);
     Ok(())
 }
 #+end_src
+
+#+RESULTS:
+: Watermelon = 🍉
 
 
 ** Exercise: Convert an Option<Result<X,Y>> into an Option<X>
@@ -3257,6 +3461,9 @@ MA: I.e., new is a factory method.
 :END:
 
   The & indicates that this argument is a reference, which gives you a way to let multiple parts of your code access one piece of data without needing to copy that data into memory multiple times. References are a complex feature, and one of Rust’s major advantages is how safe and easy it is to use references. You don’t need to know a lot of those details to finish this program. For now, all you need to know is that like variables, references are immutable by default. Hence, you need to write &mut guess rather than &guess to make it mutable. (Chapter 4 will explain references more thoroughly.)
+
+E.g., Use the generic type AsRef<T> to abstract over multiple string types.
+
 * TODO COMMENT Traits
 :PROPERTIES:
 :CUSTOM_ID: COMMENT-Traits
@@ -3267,3 +3474,53 @@ MA: I.e., new is a factory method.
   An impl block is always for a type, so, inside that block, Self means that type:
 
 Some traits are so common, they can be implemented automatically by using the derive attribute:
+
+* Implementing fmt::Display for an Enum
+
+
+#+begin_src rust
+use std::fmt;
+
+enum Location {
+    Here,
+    There,
+}
+
+// impl From<Location> for String {
+//     fn from(it: Location) -> Self {
+//         // Use names without qualifiers
+//         use crate::Location::*;
+
+//         match it {
+//             Here => String::from("DatabaseConnectionFailed"),
+//             There => String::from("There???"),
+//         }
+//     }
+// }
+
+/// Example use
+/// ```
+/// let err = Location::Here;
+/// let str = err.to_string();
+/// println!("{} and {}", str, err);
+/// ```
+impl fmt::Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use names without qualifiers
+        use Location::*;
+        match self {
+            Here => write!(f, "Indeed"),
+            There => write!(f, "Nope!"),
+        }
+    }
+}
+
+fn main() {
+    let err = Location::Here;
+    let str = err.to_string();
+    println!("{} and {}", str, err);
+}
+#+end_src
+
+#+RESULTS:
+: Indeed and Indeed

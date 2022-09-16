@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-15 Fri 13:04 -->
+<!-- 2022-04-18 Mon 08:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rust CheatSheet</title>
@@ -236,6 +236,12 @@
 <li><a href="#types">5. <a href="#types">Types</a></a></li>
 <li><a href="#COMMENT-Tuples-and-Arrays">6. <a href="#COMMENT-Tuples-and-Arrays">Tuples and Arrays</a></a></li>
 <li><a href="#Slices-and-str">7. <a href="#Slices-and-str">Slices &#x2014;and <code>str</code></a></a></li>
+<li><a href="#COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components">8. Structures &#x2014;“Tuples with <i>named and unordered</i> components”</a>
+<ul>
+<li><a href="#Structs-can-be-generic-too">8.1. <a href="#Structs-can-be-generic-too">Structs can be generic too!</a></a></li>
+</ul>
+</li>
+<li><a href="#Enumerations-Tagged-Payloads">9. <a href="#Enumerations-Tagged-Payloads">Enumerations ~ Tagged Payloads</a></a></li>
 </ul>
 </div>
 </div>
@@ -255,6 +261,12 @@
 <li><a href="#types">5. <a href="#types">Types</a></a></li>
 <li><a href="#COMMENT-Tuples-and-Arrays">6. <a href="#COMMENT-Tuples-and-Arrays">Tuples and Arrays</a></a></li>
 <li><a href="#Slices-and-str">7. <a href="#Slices-and-str">Slices &#x2014;and <code>str</code></a></a></li>
+<li><a href="#COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components">8. Structures &#x2014;“Tuples with <i>named and unordered</i> components”</a>
+<ul>
+<li><a href="#Structs-can-be-generic-too">8.1. <a href="#Structs-can-be-generic-too">Structs can be generic too!</a></a></li>
+</ul>
+</li>
+<li><a href="#Enumerations-Tagged-Payloads">9. <a href="#Enumerations-Tagged-Payloads">Enumerations ~ Tagged Payloads</a></a></li>
 </ul>
 </div>
 </div>
@@ -262,7 +274,7 @@
 <div id="outline-container-hello-world" class="outline-2">
 <h2 id="hello-world"><span class="section-number-2">1.</span> <a href="#hello-world">Hello World!</a></h2>
 <div class="outline-text-2" id="text-hello-world">
-<div class="parallel" id="org09d5df6">
+<div class="parallel" id="org03bf3c7">
 <p>
 
 </p>
@@ -290,7 +302,7 @@ every program.  For now, know that names ending in <code class="src src-emacs-li
 </div>
 
 <div id="outline-container-cargo-new" class="outline-3">
-<h3 id="cargo-new"><span class="section-number-3">1.1.</span> <a href="#orga371ade"><code>cargo new</code></a></h3>
+<h3 id="cargo-new"><span class="section-number-3">1.1.</span> <a href="#org6b4cee0"><code>cargo new</code></a></h3>
 <div class="outline-text-3" id="text-cargo-new">
 <p>
 Packages of code are referred to as <a href="https://crates.io/"><i>crates</i></a> &#x2014;which are shipped with <i>cargo</i>,
@@ -996,10 +1008,198 @@ this role. <code>str</code> really acts like slice types; e.g., <code>"hello"</c
 </p>
 </div>
 </div>
+
+<div id="outline-container-COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components" class="outline-2">
+<h2 id="COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components"><span class="section-number-2">8.</span> <a href="#org6b4cee0"><a href="https://doc.rust-lang.org/book/ch05-02-example-structs.html">Structures</a> &#x2014;“Tuples with <i>named and unordered</i> components”</a></h2>
+<div class="outline-text-2" id="text-COMMENT-https-doc-rust-lang-org-book-ch05-02-example-structs-html-Structures-Tuples-with-named-and-unordered-components">
+<p>
+Structures <i>provide ways to group several values into a single value.</i>
+<i>Conceptually, this allows us to put a bunch of related things in a bag and run
+around with the bag, instead of wrapping our arms around all of the individual</i>
+<i>things and trying to hold on to them separately.</i> ---<a href="https://eloquentjavascript.net/04_data.html#p_78ZfHX5x1B">Eloquent JavaScript</a>
+</p>
+
+<p>
+A <code class="src src-rust"><span style="color: #F99416; font-weight: bold;">struct</span></code>ure is also known as a <i>record, hashmap, association list,
+lightweight-class, JSON object</i>.  Struct types are <i>formed</i> as name-type pairs, and
+their values are <i>constructed</i> with ‘struct literals’: Name-value pairs preceded
+by the struct name.
+</p>
+
+<ul class="org-ul">
+<li><p>
+Tuples <i>quickly</i> group related variables together, but structs give us <i>meaning</i>
+by <i>naming</i> the variables &#x2014;instead of using numeric indices.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;0&#10217; Forming a new type</span>
+<span style="color: #000000;">#[derive(Debug)]</span>   <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Simple debug printing</span>
+<span style="color: #F99416; font-weight: bold;">struct</span> <span style="color: #36a1bb; background-color: #fff8dc;">Person</span> {
+    <span style="color: #863fc4; font-weight: bold;">name</span> : <span style="color: #36a1bb; background-color: #fff8dc;">String</span>,
+    <span style="color: #863fc4; font-weight: bold;">job</span>  : <span style="color: #36a1bb; background-color: #fff8dc;">String</span>,
+    <span style="color: #863fc4; font-weight: bold;">age</span>  : <span style="color: #36a1bb; background-color: #fff8dc;">u32</span>
+}
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;1&#10217; Introducing a value of that type</span>
+<span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">job</span> = <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"farmer"</span>);
+<span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">jay</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Person</span> {
+    <span style="color: #863fc4; font-weight: bold;">name</span>: <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"jason"</span>),
+    <span style="color: #863fc4; font-weight: bold;">age</span>: 72,
+    job <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Shorthand for same name, but *cloned* value:   job: String::form("farmer")</span>
+};
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Mutability of &#8220;job&#8221; and &#8220;jay&#8221; are not related at all.</span>
+job = <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"labourer"</span>);       <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Has no effect on &#8220;jay&#8221;</span>
+<span style="color: #000000;">assert!</span>(jay.job == <span style="color: #739f2f; background-color: #f2f2f2;">"farmer"</span>);
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;2&#10217; Eliminating a value of that type by destructuring</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">[Ownership moves: If &#8220;jay.field&#8221; is an object, it has moved to &#8220;field&#8221;]</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">[Namely, after this line, /read access/ of &#8220;jay.name&#8221; is invalid.]</span>
+<span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #36a1bb; background-color: #fff8dc;">Person</span> {name, age, ..} = jay; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">The &#8220;..&#8221; are to ignore the rest</span>
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;3&#10217; Updating a field [Give &#8220;jay.name&#8221; a value and so it is valid to read.]</span>
+jay.name = <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"jasim"</span>);
+<span style="color: #000000;">assert!</span>(jay.name == <span style="color: #739f2f; background-color: #f2f2f2;">"jasim"</span> &amp;&amp; name == <span style="color: #739f2f; background-color: #f2f2f2;">"jason"</span>);
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Using the automatic debug printing</span>
+<span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"Jay is </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{:?}</span><span style="color: #739f2f; background-color: #f2f2f2;">"</span>, jay); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Pretty print with: {:#?}</span>
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;4&#10217; Let's attach a method to our struct instances</span>
+<span style="color: #F99416; font-weight: bold;">impl</span> <span style="color: #36a1bb; background-color: #fff8dc;">Person</span> {
+    <span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">speak</span>(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #F99416; font-weight: bold;">self</span>) {
+        <span style="color: #F99416; background-color: #fff8dc; font-weight: bold; font-style: italic;">println!</span>(<span style="color: #739f2f; background-color: #f2f2f2;">"</span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;">: I am a </span><span style="color: #739f2f; background-color: #f2f2f2; font-style: italic;">{}</span><span style="color: #739f2f; background-color: #f2f2f2;"> years old."</span>, <span style="color: #F99416; font-weight: bold;">self</span>.name, <span style="color: #F99416; font-weight: bold;">self</span>.age);
+    }
+}
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Let's use this method.</span>
+jay.speak();
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;1&#10217;' Creating instances from instances; &#8220;prototyping&#8221;!</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">[Read: kathy is like jay but has a different name.]</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">[This &#8220;struct update syntax&#8221; can only happen in the last position.]</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">[In-particular, &#8220;Person {..jay}&#8221; is a clone of the value &#8220;jay&#8221;.]</span>
+<span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">kathy</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Person</span> {<span style="color: #863fc4; font-weight: bold;">name</span>: <span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"Kalthum"</span>), ..jay};
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;4&#10217;&#8242; We can call methods using type-namespace syntax.</span>
+<span style="color: #36a1bb; background-color: #fff8dc;">Person</span>::speak(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>kathy);
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;1&#10217;&#8243; We can also make unnamed fields, and use tuple indexing</span>
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">These &#8220;tuple structs&#8221; are basically named tuples.</span>
+<span style="color: #F99416; font-weight: bold;">struct</span> <span style="color: #36a1bb; background-color: #fff8dc;">Mine</span>(<span style="color: #36a1bb; background-color: #fff8dc;">String</span>, <span style="color: #36a1bb; background-color: #fff8dc;">u32</span>);
+<span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #F99416; font-weight: bold;">mut</span> <span style="color: #863fc4; font-weight: bold;">it</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Mine</span>(<span style="color: #36a1bb; background-color: #fff8dc;">String</span>::from(<span style="color: #739f2f; background-color: #f2f2f2;">"hola"</span>), 23);
+it.1 = 12;
+</pre>
+</div></li>
+</ul>
+
+<p>
+<code class="src src-rust"><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#10216;4&#10217;</span></code>
+The function <code>fn greet(p: &amp;Person) { println!("{}: I am a {}.", p.name, p.job) }</code>
+is very specific: It only works on <code>Person</code> values. As such, it's helpful to tie
+this behaviour more closely to the <code>Person</code> struct, which can be done by moving it
+into an “impl”ementation block. All methods in an <code>impl</code> block must have the first
+argument named <code>self</code>. As such, we could have written <code>fn speak(self: &amp;Person) {⋯}</code>.
+However, within an <code>impl</code> block, the type <code>Self</code> is an alias for the type that the
+<code>impl</code> block is for. As such, we could have written <code>fn speak(self: &amp;Self) {⋯}</code>.
+Since the first argument of methods must be <i>named</i> <code>self</code> and <i>typed</i> <code>Self</code>, we can
+just abbreviate it to <code>self: Self</code> to <code>self</code> &#x2014;however, in our case we use the
+abbreviation <code>&amp;self</code> because we want the value to be <i>borrowed</i>, not owned.
+</p>
+
+<p>
+<i>Exercise!</i> Change <code>speak</code> above to consume a mutable reference, <code>&amp;mut self</code>, that
+increments the age. Two other non-mutable things will now break in the above
+program; make them mutable. Make <code>kathy</code> speak twice and <code>assert!</code> her age has
+changed.
+</p>
+<p>
+<i>Exercise!</i> Struct methods can have the same name as struct fields &#x2014;whereas
+arbitrary functions cannot share the name of variables. Change the method name <code class="src src-rust">speak</code> to be <code class="src src-rust">age</code>.
+</p>
+</div>
+
+<div id="outline-container-Structs-can-be-generic-too" class="outline-3">
+<h3 id="Structs-can-be-generic-too"><span class="section-number-3">8.1.</span> <a href="#Structs-can-be-generic-too">Structs can be generic too!</a></h3>
+<div class="outline-text-3" id="text-Structs-can-be-generic-too">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #F99416; font-weight: bold;">struct</span> <span style="color: #36a1bb; background-color: #fff8dc;">Pair</span>&lt;<span style="color: #36a1bb; background-color: #fff8dc;">A</span>, <span style="color: #36a1bb; background-color: #fff8dc;">B</span>&gt; {
+    <span style="color: #863fc4; font-weight: bold;">first</span>: <span style="color: #36a1bb; background-color: #fff8dc;">A</span>,
+    <span style="color: #863fc4; font-weight: bold;">second</span>: <span style="color: #36a1bb; background-color: #fff8dc;">B</span>,
+}
+
+<span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">p</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Pair</span> {
+        <span style="color: #863fc4; font-weight: bold;">first</span>: 3,
+        <span style="color: #863fc4; font-weight: bold;">second</span>: <span style="color: #F99416; font-weight: bold;">true</span>,
+    }; <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">: Pair&lt;i32, bool&gt;</span>
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-Enumerations-Tagged-Payloads" class="outline-2">
+<h2 id="Enumerations-Tagged-Payloads"><span class="section-number-2">9.</span> <a href="#Enumerations-Tagged-Payloads">Enumerations ~ Tagged Payloads</a></h2>
+<div class="outline-text-2" id="text-Enumerations-Tagged-Payloads">
+<p>
+The <code>enum</code> keyword allows the creation of a type which may be one of a few
+different variants.
+</p>
+
+<p>
+Let's make an generic enum to indicate where something can be found, amongst two kinds
+of types.
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">An enum is defined by a collection of structs.</span>
+<span style="color: #000000;">#[derive(Debug)]</span>
+<span style="color: #F99416; font-weight: bold;">enum</span> <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>&lt;<span style="color: #36a1bb; background-color: #fff8dc;">A</span>, <span style="color: #36a1bb; background-color: #fff8dc;">B</span>&gt; {
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">An `enum` variant may either be unit-like,</span>
+    <span style="color: #36a1bb; background-color: #fff8dc;">NoWhere</span>,
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">or tuple structs,</span>
+    <span style="color: #36a1bb; background-color: #fff8dc;">Here</span>(<span style="color: #36a1bb; background-color: #fff8dc;">A</span>),
+    <span style="color: #36a1bb; background-color: #fff8dc;">There</span>(<span style="color: #36a1bb; background-color: #fff8dc;">B</span>),
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">or named structures.</span>
+    <span style="color: #36a1bb; background-color: #fff8dc;">Both</span> { <span style="color: #863fc4; font-weight: bold;">first</span>: <span style="color: #36a1bb; background-color: #fff8dc;">A</span>, <span style="color: #863fc4; font-weight: bold;">second</span>: <span style="color: #36a1bb; background-color: #fff8dc;">B</span> },
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Besides being generic, enums can also be recursive (via indirection)</span>
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Swap(Box&lt;Location&lt;A, B&gt;&gt;),</span>
+}
+
+<span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">To work on enums, we use the match clause</span>
+<span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">toInt</span>&lt;<span style="color: #36a1bb; background-color: #fff8dc;">A</span>, <span style="color: #36a1bb; background-color: #fff8dc;">B</span>&gt;(<span style="color: #863fc4; font-weight: bold;">l</span>: <span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span><span style="color: #36a1bb; background-color: #fff8dc;">Location</span>&lt;<span style="color: #36a1bb; background-color: #fff8dc;">A</span>, <span style="color: #36a1bb; background-color: #fff8dc;">B</span>&gt;) -&gt; <span style="color: #36a1bb; background-color: #fff8dc;">i32</span> {
+    <span style="color: #F99416; font-weight: bold;">match</span> l {
+        <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">NoWhere</span> =&gt; 0,
+        <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Here</span>(a) =&gt; -1,
+        <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">There</span>(b) =&gt; 1,
+        <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Both</span> { first, second } =&gt; 2,
+    }
+}
+
+<span style="color: #F99416; font-weight: bold;">fn</span> <span style="color: #36a1bb; font-weight: bold;">main</span>() {
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">both</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Both</span> {
+        <span style="color: #863fc4; font-weight: bold;">first</span>: 3,
+        <span style="color: #863fc4; font-weight: bold;">second</span>: <span style="color: #F99416; font-weight: bold;">false</span>,
+    };
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">nope</span> = <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::<span style="color: #36a1bb; background-color: #fff8dc;">NoWhere</span>::&lt;<span style="color: #36a1bb; background-color: #fff8dc;">i32</span>, <span style="color: #36a1bb; background-color: #fff8dc;">i32</span>&gt;;
+
+    <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">Use names without qualifiers</span>
+    <span style="color: #F99416; font-weight: bold;">use</span> <span style="color: #F99416; font-weight: bold;">crate</span>::<span style="color: #36a1bb; background-color: #fff8dc;">Location</span>::*;
+    <span style="color: #F99416; font-weight: bold;">let</span> <span style="color: #863fc4; font-weight: bold;">no</span>: <span style="color: #36a1bb; background-color: #fff8dc;">Location</span>&lt;<span style="color: #36a1bb; background-color: #fff8dc;">i32</span>, <span style="color: #36a1bb; background-color: #fff8dc;">i32</span>&gt; = <span style="color: #36a1bb; background-color: #fff8dc;">NoWhere</span>;
+
+    <span style="color: #000000;">dbg!</span>(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>no, toInt(<span style="color: #122B3F; background-color: #f7f8fd;">&amp;</span>no)); <span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">// </span><span style="color: #a89984; background-color: #f2f2f2; font-style: italic;">&#8658; &amp;no = NoWhere; toInt(&amp;no) = 0</span>
+}
+</pre>
+</div>
+
+<p>
+<i>Exercise!</i> Insert a <code>use</code> clause within <code>toInt</code> so that you can use the constructor
+names without qualifying them.
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: <a href="https://alhassy.github.io/">Musa Al-hassy</a></p>
-<p class="date">Created: 2022-04-15 Fri 13:04</p>
+<p class="date">Created: 2022-04-18 Mon 08:48</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
